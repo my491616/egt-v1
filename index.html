@@ -1,0 +1,2464 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>九宮命理 Pro — 姓名分析・命名系統</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #140800;
+  --gold: #c8952a;
+  --gold-light: #e8c96a;
+  --gold-dark: #8b6800;
+  --gold-pale: rgba(200,149,42,0.08);
+  --red: #8b1a1a;
+  --red-light: #c94040;
+  --cream: #fdf8ef;
+  --warm: #8a7d6a;
+  --paper: #faf4e8;
+  --border: #d4b896;
+  --shadow: rgba(20,8,0,0.18);
+  --tab-brown: #6b3210;
+  --green: #2a6a2a;
+  --green-light: #4a9a4a;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--ink);color:var(--ink);min-height:100vh;background-image:radial-gradient(ellipse at 15% 15%,#3a1500 0%,transparent 55%),radial-gradient(ellipse at 85% 85%,#1e0600 0%,transparent 55%),radial-gradient(ellipse at 50% 50%,#0a0400 0%,transparent 80%);}
+
+/* ── LOGIN SCREEN ── */
+#loginScreen{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#0e0400 0%,#2e1000 45%,#0e0400 100%);display:flex;align-items:center;justify-content:center;}
+.login-box{background:var(--paper);border:1px solid var(--border);border-radius:16px;padding:48px 40px;width:380px;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,0.6);}
+.login-emblem{width:80px;height:80px;background:linear-gradient(135deg,#6b3a00,var(--gold));border-radius:10px;border:2px solid var(--gold-light);display:flex;align-items:center;justify-content:center;font-family:'Ma Shan Zheng',serif;font-size:42px;color:#fdf5ec;margin:0 auto 20px;box-shadow:0 4px 20px rgba(200,149,42,0.4);}
+.login-title{font-family:'Ma Shan Zheng','Noto Serif TC',serif;font-size:26px;color:var(--tab-brown);font-weight:900;letter-spacing:6px;margin-bottom:6px;}
+.login-sub{font-family:'Noto Serif TC',serif;font-size:12px;color:var(--warm);letter-spacing:3px;margin-bottom:32px;}
+.login-field{position:relative;margin-bottom:16px;}
+.login-field input{width:100%;padding:13px 16px;border:1px solid var(--border);border-radius:8px;background:var(--cream);font-size:18px;letter-spacing:8px;text-align:center;font-family:'Noto Serif TC',serif;color:var(--ink);}
+.login-field input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(200,149,42,0.15);}
+.login-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--gold-dark),var(--gold));color:var(--ink);border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:2px;font-family:'Noto Serif TC',serif;margin-top:8px;transition:all 0.2s;}
+.login-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(139,104,0,0.4);}
+.login-err{color:var(--red-light);font-size:12px;margin-top:8px;min-height:18px;}
+.login-hint{font-size:11px;color:var(--warm);margin-top:16px;}
+
+/* ── ADMIN PANEL ── */
+#adminPanel{display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.8);align-items:center;justify-content:center;}
+#adminPanel.show{display:flex;}
+.admin-box{background:var(--paper);border:1px solid var(--gold);border-radius:12px;padding:32px;width:720px;max-height:85vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,0.6);}
+.admin-title{font-family:'Noto Serif TC',serif;font-size:18px;color:var(--tab-brown);font-weight:700;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;}
+.admin-section{margin-bottom:24px;}
+.admin-section h4{font-size:13px;color:var(--warm);letter-spacing:2px;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.pwd-list{display:flex;flex-direction:column;gap:8px;}
+.pwd-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--cream);border:1px solid var(--border);border-radius:6px;}
+.pwd-code{font-family:monospace;font-size:16px;font-weight:700;color:var(--gold-dark);letter-spacing:4px;flex:1;}
+.pwd-meta{font-size:11px;color:var(--warm);flex:2;}
+.pwd-role{font-size:11px;padding:2px 8px;border-radius:10px;background:rgba(200,149,42,0.12);border:1px solid var(--gold-dark);color:var(--gold-dark);}
+.pwd-role.admin-role{background:rgba(139,26,26,0.12);border-color:var(--red);color:var(--red);}
+.pwd-del-btn{background:none;border:none;cursor:pointer;color:rgba(139,26,26,0.5);font-size:14px;padding:2px 6px;border-radius:3px;transition:all 0.2s;}
+.pwd-del-btn:hover{color:var(--red-light);background:rgba(139,26,26,0.1);}
+.admin-form{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:end;}
+.admin-input{padding:8px 12px;border:1px solid var(--border);border-radius:5px;background:var(--cream);font-size:13px;color:var(--ink);font-family:'Noto Sans TC',sans-serif;}
+.admin-select{padding:8px 12px;border:1px solid var(--border);border-radius:5px;background:var(--cream);font-size:13px;color:var(--ink);}
+.btn-small{padding:8px 14px;border-radius:5px;border:none;cursor:pointer;font-size:12px;font-family:'Noto Sans TC',sans-serif;font-weight:500;transition:all 0.2s;}
+.btn-small.primary{background:linear-gradient(135deg,var(--gold-dark),var(--gold));color:var(--ink);}
+.btn-small.danger{background:rgba(139,26,26,0.1);color:var(--red);border:1px solid rgba(139,26,26,0.3);}
+.btn-small.outline{background:transparent;color:var(--tab-brown);border:1px solid var(--tab-brown);}
+
+/* ── COVER PAGE ── */
+#coverModal{display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.85);align-items:center;justify-content:center;}
+#coverModal.show{display:flex;}
+.cover-page{background:linear-gradient(160deg,#fdf8ef 0%,#f8f0da 100%);width:680px;max-height:90vh;overflow-y:auto;border-radius:4px;box-shadow:0 24px 80px rgba(0,0,0,0.7);position:relative;}
+.cover-inner{padding:56px 60px;}
+.cover-header{text-align:center;border-bottom:2px solid var(--gold);padding-bottom:32px;margin-bottom:32px;}
+.cover-logo{font-family:'Ma Shan Zheng',serif;font-size:64px;color:var(--gold);line-height:1;margin-bottom:8px;}
+.cover-title-main{font-family:'Noto Serif TC',serif;font-size:28px;font-weight:900;color:var(--tab-brown);letter-spacing:6px;margin-bottom:6px;}
+.cover-title-sub{font-size:13px;color:var(--warm);letter-spacing:3px;}
+.cover-deco{display:flex;align-items:center;gap:12px;margin:20px 0 0;}
+.cover-deco-line{flex:1;height:1px;background:linear-gradient(to right,transparent,var(--gold-dark),transparent);}
+.cover-deco-sym{color:var(--gold-dark);font-size:18px;}
+.cover-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 24px;margin:24px 0;}
+.cover-info-item{padding:14px 16px;border:1px solid rgba(212,184,150,0.5);border-radius:6px;background:rgba(200,149,42,0.03);}
+.cover-info-label{font-size:10px;color:var(--warm);letter-spacing:2px;margin-bottom:5px;}
+.cover-info-value{font-family:'Noto Serif TC',serif;font-size:17px;font-weight:700;color:var(--tab-brown);}
+.cover-info-value.large{font-size:26px;letter-spacing:4px;}
+.cover-analyst{margin-top:28px;padding-top:20px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.cover-analyst-field{display:flex;flex-direction:column;gap:4px;}
+.cover-analyst-label{font-size:10px;color:var(--warm);letter-spacing:2px;}
+.cover-analyst-value{font-size:14px;color:var(--ink);border-bottom:1px solid var(--border);padding-bottom:4px;min-height:26px;}
+.cover-footer{text-align:center;margin-top:32px;padding-top:20px;border-top:1px dashed var(--border);font-size:11px;color:var(--warm);letter-spacing:1px;line-height:2;}
+.cover-seal{display:flex;align-items:center;justify-content:center;margin:16px auto 0;width:110px;height:110px;}
+.cover-actions{display:flex;gap:10px;justify-content:center;padding:20px 0;border-top:1px solid var(--border);margin:0 -60px;padding:16px 60px;background:rgba(200,149,42,0.04);}
+
+/* ── HEADER ── */
+.app-header{background:linear-gradient(135deg,#0e0400 0%,#2e1000 45%,#0e0400 100%);border-bottom:1px solid rgba(200,149,42,0.35);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 4px 24px rgba(0,0,0,0.6);}
+.app-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--gold),transparent);}
+.logo{display:flex;align-items:center;gap:14px;}
+.logo-emblem{width:44px;height:44px;background:linear-gradient(135deg,#6b3a00,var(--gold));border-radius:6px;border:1px solid var(--gold-light);display:flex;align-items:center;justify-content:center;font-family:'Ma Shan Zheng',serif;font-size:21px;color:var(--ink);box-shadow:0 2px 14px rgba(200,149,42,0.45);}
+.logo-text h1{font-family:'Noto Serif TC',serif;font-size:19px;font-weight:700;color:var(--gold);letter-spacing:4px;}
+.logo-text p{font-size:10px;color:var(--warm);letter-spacing:3px;margin-top:1px;}
+.header-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.hbtn{padding:6px 13px;border-radius:4px;cursor:pointer;font-size:11px;font-family:'Noto Sans TC',sans-serif;transition:all 0.2s;letter-spacing:0.5px;border:1px solid rgba(200,149,42,0.4);background:rgba(200,149,42,0.08);color:var(--gold);}
+.hbtn:hover{background:rgba(200,149,42,0.2);}
+.hbtn.primary{background:var(--gold-dark);color:var(--cream);border-color:var(--gold);}
+.hbtn.primary:hover{background:var(--gold);color:var(--ink);}
+.hbtn.danger-btn{background:rgba(139,26,26,0.1);color:var(--red-light);border-color:rgba(139,26,26,0.3);}
+.hbtn.danger-btn:hover{background:rgba(139,26,26,0.2);}
+
+/* ── MODE BAR ── */
+.mode-bar{background:rgba(10,4,0,0.85);border-bottom:1px solid rgba(200,149,42,0.18);display:flex;justify-content:center;gap:0;padding:0 28px;}
+.mode-btn{padding:12px 26px;border:none;background:transparent;color:rgba(253,248,239,0.5);cursor:pointer;font-family:'Noto Serif TC',serif;font-size:14px;border-bottom:3px solid transparent;letter-spacing:2px;transition:all 0.25s;white-space:nowrap;}
+.mode-btn:hover{color:var(--gold-light);}
+.mode-btn.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:700;}
+.mode-btn .mode-icon{margin-right:6px;font-size:14px;}
+
+/* ── LAYOUT ── */
+.app-layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 100px);}
+.sidebar{background:rgba(14,4,0,0.75);border-right:1px solid rgba(200,149,42,0.15);padding:16px 0;backdrop-filter:blur(8px);}
+.sidebar-label{padding:5px 16px 4px;font-size:10px;letter-spacing:3px;color:rgba(138,125,106,0.7);text-transform:uppercase;}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:8px 16px;cursor:pointer;color:rgba(253,248,239,0.5);font-size:13px;transition:all 0.2s;border-left:3px solid transparent;}
+.sidebar-item:hover{color:var(--gold-light);background:rgba(200,149,42,0.04);}
+.sidebar-item.active{color:var(--gold);background:rgba(200,149,42,0.09);border-left-color:var(--gold);}
+.sidebar-divider{height:1px;background:rgba(200,149,42,0.1);margin:8px 16px;}
+.saved-list{padding:6px 8px;max-height:260px;overflow-y:auto;}
+.saved-item{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;margin-bottom:4px;background:rgba(200,149,42,0.04);border:1px solid rgba(200,149,42,0.1);border-radius:5px;cursor:pointer;transition:all 0.2s;}
+.saved-item:hover{background:rgba(200,149,42,0.1);border-color:rgba(200,149,42,0.28);}
+.saved-name{color:var(--gold-light);font-size:13px;font-weight:500;}
+.saved-dob{color:var(--warm);font-size:11px;margin-top:1px;}
+.saved-del{color:rgba(139,26,26,0.55);background:none;border:none;cursor:pointer;font-size:13px;padding:2px 5px;border-radius:3px;transition:all 0.2s;}
+.saved-del:hover{color:var(--red-light);background:rgba(139,26,26,0.12);}
+.saved-empty{color:var(--warm);font-size:11px;text-align:center;padding:12px 0;}
+
+/* ── MAIN ── */
+.main-content{padding:24px 28px;overflow-y:auto;}
+.mode-panel{display:none;}
+.mode-panel.active{display:block;}
+
+/* ── CARDS ── */
+.input-card{background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:22px;box-shadow:0 4px 20px var(--shadow);position:relative;overflow:hidden;}
+.input-card::before{content:'☯';position:absolute;top:10px;right:20px;font-size:80px;color:rgba(200,149,42,0.04);line-height:1;}
+.card-heading{font-family:'Noto Serif TC',serif;font-size:16px;font-weight:700;color:var(--tab-brown);margin-bottom:18px;display:flex;align-items:center;gap:10px;}
+.card-heading::after{content:'';flex:1;height:1px;background:linear-gradient(to right,var(--border),transparent);}
+.form-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 16px;align-items:end;}
+.fgroup{display:flex;flex-direction:column;gap:5px;}
+.fgroup label{font-size:11px;color:var(--warm);letter-spacing:1px;font-weight:500;}
+.fgroup input,.fgroup select{padding:9px 12px;border:1px solid var(--border);border-radius:6px;background:var(--cream);font-size:13px;color:var(--ink);font-family:'Noto Serif TC',serif;transition:border-color 0.2s;}
+.fgroup input:focus,.fgroup select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(200,149,42,0.1);}
+.fgroup input.big-name{font-size:19px;font-weight:700;letter-spacing:4px;}
+.form-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px;}
+.btn{padding:10px 24px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-family:'Noto Sans TC',sans-serif;font-weight:500;transition:all 0.2s;}
+.btn-primary{background:linear-gradient(135deg,var(--gold-dark),var(--gold));color:var(--ink);letter-spacing:1px;box-shadow:0 2px 8px rgba(139,104,0,0.3);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(139,104,0,0.45);}
+.btn-outline{background:transparent;color:var(--tab-brown);border:1px solid var(--tab-brown);}
+.btn-outline:hover{background:rgba(107,50,16,0.06);}
+.btn-green{background:linear-gradient(135deg,#1a5c1a,#2e8b2e);color:#f0fff0;letter-spacing:1px;box-shadow:0 2px 8px rgba(20,80,20,0.3);}
+.btn-green:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(20,80,20,0.4);}
+.btn-pdf{background:linear-gradient(135deg,#8b1a1a,#c94040);color:white;letter-spacing:1px;}
+.btn-pdf:hover{transform:translateY(-1px);}
+.err{color:var(--red-light);font-size:12px;}
+
+/* ── TABS ── */
+.result-section{display:none;}
+.result-section.visible{display:block;}
+.tab-bar{display:flex;border-bottom:2px solid var(--border);margin-bottom:20px;overflow-x:auto;}
+.tab-btn{padding:9px 16px;border:none;background:transparent;color:var(--warm);cursor:pointer;font-size:12px;font-family:'Noto Sans TC',sans-serif;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all 0.2s;}
+.tab-btn:hover{color:var(--tab-brown);}
+.tab-btn.active{color:var(--tab-brown);border-bottom-color:var(--gold);font-weight:600;}
+.tab-content{display:none;}
+.tab-content.active{display:block;animation:fadeUp 0.3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── ANALYSIS CARDS ── */
+.acard{background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:16px;box-shadow:0 2px 10px var(--shadow);}
+.acard h3{font-family:'Noto Serif TC',serif;font-size:14px;color:var(--tab-brown);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.badge{background:var(--gold);color:var(--ink);font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;font-family:'Noto Sans TC',sans-serif;}
+.badge.green{background:var(--green);color:white;}
+.badge.red{background:var(--red);color:white;}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:16px;}
+.sbox{background:linear-gradient(135deg,rgba(200,149,42,0.07),rgba(200,149,42,0.02));border:1px solid rgba(200,149,42,0.2);border-radius:7px;padding:11px 12px;text-align:center;}
+.sbox .sl{font-size:10px;color:var(--warm);letter-spacing:1px;margin-bottom:4px;}
+.sbox .sv{font-family:'Noto Serif TC',serif;font-size:20px;font-weight:700;color:var(--gold);}
+.sbox .ss{font-size:10px;color:var(--tab-brown);margin-top:2px;}
+.palace-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:320px;margin:0 auto;}
+.pcell{aspect-ratio:1;background:linear-gradient(135deg,rgba(200,149,42,0.07),rgba(200,149,42,0.02));border:1px solid var(--border);border-radius:5px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px;}
+.pcell.hl{background:linear-gradient(135deg,rgba(200,149,42,0.28),rgba(200,149,42,0.12));border-color:var(--gold);box-shadow:0 0 0 2px rgba(200,149,42,0.18);}
+.pcell .pn{font-family:'Noto Serif TC',serif;font-size:20px;font-weight:700;color:var(--gold);}
+.pcell .pname{font-size:10px;color:var(--tab-brown);margin-top:2px;font-weight:600;}
+.pcell .ptype{font-size:9px;color:var(--warm);margin-top:1px;}
+.igrid{display:grid;grid-template-columns:110px 1fr;gap:0;}
+.irow{display:contents;}
+.irow .k,.irow .v{padding:8px 11px;border-bottom:1px solid rgba(212,184,150,0.4);font-size:12px;line-height:1.6;}
+.irow .k{background:rgba(200,149,42,0.04);color:var(--warm);font-weight:500;display:flex;align-items:flex-start;}
+.irow .v{color:var(--ink);}
+.irow:last-child .k,.irow:last-child .v{border-bottom:none;}
+.yun-meter{display:flex;align-items:center;gap:10px;margin:6px 0;}
+.yun-track{flex:1;height:8px;background:rgba(212,184,150,0.3);border-radius:4px;overflow:hidden;}
+.yun-fill{height:100%;border-radius:4px;background:linear-gradient(to right,var(--gold-dark),var(--gold));transition:width 0.9s ease;}
+.yun-pct{font-weight:700;color:var(--gold);font-size:14px;width:42px;}
+.fortune-ring{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.fnode{padding:4px 10px;border-radius:18px;font-size:12px;border:1px solid;cursor:default;}
+.fnode.good{background:rgba(30,90,30,0.1);border-color:#3d7a3d;color:#1e5a1e;}
+.fnode.bad{background:rgba(139,26,26,0.1);border-color:var(--red-light);color:var(--red);}
+.fnode.cur{box-shadow:0 0 0 2px var(--gold);font-weight:700;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.tip{background:rgba(200,149,42,0.05);border-left:3px solid var(--gold-dark);padding:8px 12px;border-radius:0 5px 5px 0;font-size:12px;color:var(--tab-brown);line-height:1.75;margin-bottom:12px;}
+.pill{display:inline-block;padding:2px 8px;background:rgba(200,149,42,0.1);border-radius:18px;font-size:11px;color:var(--gold-dark);border:1px solid rgba(200,149,42,0.22);margin:2px;}
+
+/* ── 10-YEAR FORECAST CHART ── */
+.forecast-chart{margin:16px 0;overflow-x:auto;}
+.forecast-bars{display:flex;gap:4px;align-items:flex-end;height:120px;padding:0 4px;}
+.fc-bar-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;min-width:44px;}
+.fc-bar{width:100%;border-radius:4px 4px 0 0;position:relative;transition:all 0.3s;cursor:pointer;min-height:8px;}
+.fc-bar.good-bar{background:linear-gradient(to top,#1a5c1a,#4a9a4a);}
+.fc-bar.bad-bar{background:linear-gradient(to top,#8b1a1a,#c04040);}
+.fc-bar:hover{filter:brightness(1.2);}
+.fc-bar-label{font-size:10px;color:var(--warm);text-align:center;line-height:1.3;}
+.fc-bar-pct{font-size:10px;font-weight:700;position:absolute;top:-18px;left:50%;transform:translateX(-50%);white-space:nowrap;}
+.fc-bar-pct.good-pct{color:var(--green);}
+.fc-bar-pct.bad-pct{color:var(--red);}
+.fc-year{font-size:10px;color:var(--warm);text-align:center;}
+.fc-yun{font-size:9px;color:var(--tab-brown);text-align:center;font-weight:600;}
+.forecast-legend{display:flex;gap:16px;margin-top:12px;font-size:11px;}
+.legend-item{display:flex;align-items:center;gap:6px;}
+.legend-dot{width:10px;height:10px;border-radius:2px;}
+
+/* ── NAMING MODULE ── */
+.naming-subtitle{font-size:13px;color:var(--warm);line-height:1.7;}
+.naming-config{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
+.name-goal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0;}
+.goal-chip{padding:7px 10px;border-radius:5px;border:1px solid var(--border);background:var(--cream);font-size:12px;cursor:pointer;text-align:center;transition:all 0.2s;color:var(--warm);}
+.goal-chip.selected{background:rgba(200,149,42,0.14);border-color:var(--gold);color:var(--gold-dark);font-weight:600;}
+
+/* ── LUCKY CHARS PANEL ── */
+.lucky-section{margin:16px 0;}
+.lucky-section h4{font-size:12px;color:var(--warm);letter-spacing:2px;margin-bottom:10px;}
+.lucky-tabs{display:flex;gap:6px;margin-bottom:10px;}
+.lucky-tab{padding:5px 12px;border-radius:4px;font-size:11px;cursor:pointer;border:1px solid var(--border);background:var(--cream);color:var(--warm);transition:all 0.2s;}
+.lucky-tab.active{background:rgba(200,149,42,0.14);border-color:var(--gold);color:var(--gold-dark);}
+.lucky-chars{display:flex;flex-wrap:wrap;gap:6px;}
+.lucky-char{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border:1px solid var(--border);border-radius:5px;background:var(--cream);cursor:pointer;font-family:'Noto Serif TC',serif;font-size:18px;color:var(--tab-brown);transition:all 0.2s;position:relative;}
+.lucky-char:hover{border-color:var(--gold);background:rgba(200,149,42,0.1);transform:scale(1.1);}
+.lucky-char.selected{border-color:var(--gold);background:rgba(200,149,42,0.2);color:var(--gold-dark);}
+.lucky-char-stroke{position:absolute;bottom:1px;right:2px;font-size:8px;color:var(--warm);}
+
+/* ── PINNED CHARS ── */
+.pinned-chars{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+.pinned-char{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:4px;background:rgba(200,149,42,0.12);border:1px solid var(--gold-dark);color:var(--gold-dark);font-size:13px;font-family:'Noto Serif TC',serif;}
+.pinned-char-del{cursor:pointer;color:rgba(139,26,26,0.6);font-size:12px;margin-left:2px;}
+.pinned-char-del:hover{color:var(--red-light);}
+.pinned-pos{font-size:10px;color:var(--warm);margin-left:2px;}
+
+.candidates-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-top:16px;}
+.cand-card{background:var(--paper);border:1px solid var(--border);border-radius:8px;padding:14px 16px;cursor:pointer;transition:all 0.25s;position:relative;}
+.cand-card:hover{border-color:var(--gold);box-shadow:0 4px 16px var(--shadow);transform:translateY(-2px);}
+.cand-card.star{border-color:var(--gold);background:linear-gradient(135deg,#fffcf2,var(--paper));}
+.cand-card.star::before{content:'★ 推薦';position:absolute;top:-1px;right:10px;background:var(--gold);color:var(--ink);font-size:10px;padding:2px 8px;border-radius:0 0 5px 5px;font-weight:700;}
+.cand-name{font-family:'Noto Serif TC',serif;font-size:24px;font-weight:700;color:var(--tab-brown);letter-spacing:6px;margin-bottom:9px;}
+.cand-score{display:flex;align-items:center;gap:6px;margin-bottom:7px;}
+.score-bar-bg{flex:1;height:5px;background:rgba(212,184,150,0.3);border-radius:3px;overflow:hidden;}
+.score-bar-fill{height:100%;border-radius:3px;background:linear-gradient(to right,var(--gold-dark),var(--gold));}
+.score-label{font-size:11px;color:var(--gold-dark);font-weight:700;width:34px;text-align:right;}
+.cand-tags{display:flex;flex-wrap:wrap;gap:4px;}
+.ctag{font-size:10px;padding:1px 6px;border-radius:10px;background:rgba(200,149,42,0.1);border:1px solid rgba(200,149,42,0.2);color:var(--gold-dark);}
+.ctag.good{background:rgba(30,90,30,0.1);border-color:#4a8a4a;color:#1e5a1e;}
+.ctag.bad{background:rgba(139,26,26,0.1);border-color:#c04040;color:#8b1a1a;}
+.cand-detail{background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:22px 26px;margin-top:18px;animation:fadeUp 0.3s ease;}
+.cand-detail-name{font-family:'Noto Serif TC',serif;font-size:34px;font-weight:700;color:var(--tab-brown);letter-spacing:8px;text-align:center;margin-bottom:18px;}
+.naming-progress{text-align:center;padding:36px;color:var(--warm);}
+.spinner{width:34px;height:34px;border:3px solid rgba(200,149,42,0.2);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:1000;align-items:center;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:24px;width:360px;box-shadow:0 16px 48px rgba(0,0,0,0.45);}
+.modal h3{font-family:'Noto Serif TC',serif;color:var(--tab-brown);margin-bottom:12px;font-size:15px;}
+.modal input{width:100%;padding:9px 13px;border:1px solid var(--border);border-radius:5px;font-size:14px;font-family:'Noto Serif TC',serif;color:var(--ink);background:var(--cream);margin-bottom:12px;}
+.modal input:focus{outline:none;border-color:var(--gold);}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:var(--gold);padding:10px 16px;border-radius:7px;border:1px solid var(--gold-dark);font-size:13px;z-index:9999;opacity:0;transform:translateY(10px);transition:all 0.3s;}
+.toast.show{opacity:1;transform:translateY(0);}
+
+/* ── PDF PROTECT MODAL ── */
+#pdfModal{display:none;position:fixed;inset:0;z-index:9005;background:rgba(0,0,0,0.8);align-items:center;justify-content:center;}
+#pdfModal.show{display:flex;}
+.pdf-box{background:var(--paper);border:1px solid var(--border);border-radius:12px;padding:32px;width:400px;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,0.6);}
+.pdf-box h3{font-family:'Noto Serif TC',serif;font-size:16px;color:var(--tab-brown);margin-bottom:8px;}
+.pdf-box p{font-size:12px;color:var(--warm);margin-bottom:20px;}
+.pdf-box input{width:100%;padding:11px;border:1px solid var(--border);border-radius:6px;font-size:16px;text-align:center;letter-spacing:6px;font-family:'Noto Serif TC',serif;color:var(--ink);background:var(--cream);margin-bottom:12px;}
+
+/* ── PRINT / PDF ── */
+@media print{
+  /* 隱藏所有 UI 元件 */
+  #loginScreen,#adminPanel,#pdfModal,
+  .app-header,.mode-bar,.sidebar,
+  .form-actions,.tab-bar,.hbtn,
+  .modal-overlay,.toast,
+  .cover-actions,
+  #panel-naming,
+  #adminPanel,#pdfModal,
+  .input-card{display:none!important;}
+
+  /* 版面設定 */
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+  @page{size:A4;margin:0;}
+  html,body{margin:0;padding:0;background:white!important;}
+
+  /* ── 封面頁 ── */
+  #coverModal{
+    display:block!important;
+    position:relative!important;
+    inset:auto!important;
+    background:none!important;
+    width:100%!important;
+    height:100vh!important;
+    page-break-after:always;
+  }
+  .cover-page{
+    width:210mm!important;
+    min-height:297mm!important;
+    max-height:297mm!important;
+    margin:0 auto!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    background:linear-gradient(160deg,#fdf8ef 0%,#f5ead0 60%,#ede0c0 100%)!important;
+    position:relative!important;
+    overflow:hidden!important;
+    display:flex!important;
+    flex-direction:column!important;
+    justify-content:center!important;
+  }
+  /* 封面裝飾角落 */
+  .cover-page::before{
+    content:'';
+    position:absolute;
+    top:0;left:0;right:0;
+    height:12mm;
+    background:linear-gradient(135deg,#6b3210,#c8952a)!important;
+  }
+  .cover-page::after{
+    content:'';
+    position:absolute;
+    bottom:0;left:0;right:0;
+    height:12mm;
+    background:linear-gradient(135deg,#c8952a,#6b3210)!important;
+  }
+  .cover-inner{
+    padding:20mm 25mm!important;
+    flex:1!important;
+  }
+  .cover-logo{
+    font-size:88pt!important;
+    color:#c8952a!important;
+    text-align:center!important;
+    line-height:1!important;
+    margin-bottom:4mm!important;
+    text-shadow:2px 2px 0 rgba(107,50,16,0.2)!important;
+  }
+  .cover-title-main{
+    font-size:28pt!important;
+    letter-spacing:10px!important;
+    color:#3a1800!important;
+    text-align:center!important;
+    margin-bottom:2mm!important;
+    font-weight:900!important;
+  }
+  .cover-title-sub{
+    font-size:9pt!important;
+    letter-spacing:3px!important;
+    color:#8a7d6a!important;
+    text-align:center!important;
+    margin-bottom:8mm!important;
+  }
+  .cover-deco{margin:0 0 8mm!important;}
+  .cover-deco-line{background:linear-gradient(to right,transparent,#c8952a,transparent)!important;}
+  .cover-deco-sym{font-size:18pt!important;color:#c8952a!important;}
+  .cover-info-grid{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:4mm 6mm!important;
+    margin:8mm 0!important;
+  }
+  .cover-info-item{
+    padding:4mm 5mm!important;
+    border:1px solid rgba(200,149,42,0.5)!important;
+    border-radius:3mm!important;
+    background:rgba(200,149,42,0.06)!important;
+  }
+  .cover-info-label{
+    font-size:7pt!important;
+    color:#8a7d6a!important;
+    letter-spacing:2px!important;
+    margin-bottom:1.5mm!important;
+  }
+  .cover-info-value{
+    font-size:16pt!important;
+    font-weight:700!important;
+    color:#3a1800!important;
+  }
+  .cover-info-value.large{font-size:22pt!important;letter-spacing:4px!important;}
+  .cover-analyst{
+    margin-top:8mm!important;
+    padding-top:5mm!important;
+    border-top:1px solid #d4b896!important;
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:3mm!important;
+  }
+  .cover-analyst-label{font-size:7pt!important;color:#8a7d6a!important;letter-spacing:2px!important;margin-bottom:1mm!important;}
+  .cover-analyst-value,.cover-analyst input{
+    font-size:11pt!important;
+    color:#140800!important;
+    border:none!important;
+    border-bottom:1px solid #d4b896!important;
+    background:transparent!important;
+    padding:1mm 0!important;
+    width:100%!important;
+    font-family:'Noto Serif TC',serif!important;
+  }
+  .cover-footer{
+    text-align:center!important;
+    margin-top:8mm!important;
+    padding-top:5mm!important;
+    border-top:1px dashed #d4b896!important;
+    font-size:7.5pt!important;
+    color:#8a7d6a!important;
+    line-height:2!important;
+  }
+  .cover-seal{
+    display:flex!important;
+    width:30mm!important;
+    height:30mm!important;
+    align-items:center!important;
+    justify-content:center!important;
+    margin:4mm auto 0!important;
+    transform:none!important;
+    opacity:1!important;
+    border:none!important;
+  }
+  .cover-seal svg{
+    width:30mm!important;
+    height:30mm!important;
+  }
+
+  /* ── 報告主體 ── */
+  .app-layout{
+    display:block!important;
+    margin:0!important;
+    padding:0!important;
+  }
+  .main-content{
+    padding:10mm 14mm!important;
+  }
+  .mode-panel{display:none!important;}
+  .mode-panel.active{display:block!important;}
+  .result-section{display:block!important;}
+
+  /* 頁眉裝飾條 */
+  .main-content::before{
+    content:'九宮命理分析報告';
+    display:block;
+    font-family:'Noto Serif TC',serif;
+    font-size:8pt;
+    color:#8a7d6a;
+    letter-spacing:4px;
+    text-align:center;
+    padding:3mm 0;
+    border-bottom:1px solid #d4b896;
+    margin-bottom:6mm;
+  }
+
+  /* Tab 內容全部展開 */
+  .tab-content{
+    display:block!important;
+    page-break-inside:avoid;
+    margin-bottom:6mm!important;
+  }
+
+  /* 分析卡片 */
+  .acard{
+    background:white!important;
+    border:1px solid #d4b896!important;
+    border-radius:3mm!important;
+    padding:5mm 6mm!important;
+    margin-bottom:5mm!important;
+    page-break-inside:avoid;
+    box-shadow:none!important;
+  }
+  .acard h3{
+    font-family:'Noto Serif TC',serif!important;
+    font-size:12pt!important;
+    font-weight:700!important;
+    color:#6b3210!important;
+    padding-bottom:2mm!important;
+    margin-bottom:3mm!important;
+    border-bottom:1.5px solid #c8952a!important;
+    display:flex!important;
+    align-items:center!important;
+    gap:2mm!important;
+  }
+  .card-heading{
+    font-family:'Noto Serif TC',serif!important;
+    font-size:13pt!important;
+    font-weight:700!important;
+    color:#6b3210!important;
+  }
+  .input-card{display:none!important;}
+
+  /* 統計方塊 */
+  .stats-row{
+    display:grid!important;
+    grid-template-columns:repeat(auto-fit,minmax(28mm,1fr))!important;
+    gap:3mm!important;
+    margin-bottom:5mm!important;
+  }
+  .sbox{
+    background:linear-gradient(135deg,rgba(200,149,42,0.1),rgba(200,149,42,0.04))!important;
+    border:1px solid rgba(200,149,42,0.3)!important;
+    border-radius:2mm!important;
+    padding:3mm 4mm!important;
+    text-align:center!important;
+  }
+  .sbox .sl{font-size:7.5pt!important;color:#8a7d6a!important;margin-bottom:1mm!important;}
+  .sbox .sv{font-size:18pt!important;font-weight:700!important;color:#c8952a!important;}
+  .sbox .ss{font-size:7pt!important;color:#6b3210!important;margin-top:0.5mm!important;}
+
+  /* 九宮格 */
+  .palace-grid{
+    display:grid!important;
+    grid-template-columns:repeat(3,1fr)!important;
+    gap:2mm!important;
+    max-width:70mm!important;
+    margin:0 auto!important;
+  }
+  .pcell{
+    aspect-ratio:1!important;
+    border:1px solid #d4b896!important;
+    border-radius:1.5mm!important;
+    display:flex!important;flex-direction:column!important;
+    align-items:center!important;justify-content:center!important;
+    padding:2mm!important;
+    background:rgba(200,149,42,0.04)!important;
+  }
+  .pcell.hl{
+    background:linear-gradient(135deg,rgba(200,149,42,0.25),rgba(200,149,42,0.1))!important;
+    border-color:#c8952a!important;
+    box-shadow:0 0 0 1.5px rgba(200,149,42,0.3)!important;
+  }
+  .pcell .pn{font-size:16pt!important;font-weight:700!important;color:#c8952a!important;}
+  .pcell .pname{font-size:7pt!important;color:#6b3210!important;font-weight:600!important;}
+  .pcell .ptype{font-size:6pt!important;color:#8a7d6a!important;}
+
+  /* 資料列表格 */
+  .igrid{display:grid!important;grid-template-columns:26mm 1fr!important;}
+  .irow .k{
+    font-size:8.5pt!important;color:#8a7d6a!important;
+    padding:2mm 3mm!important;
+    background:rgba(200,149,42,0.05)!important;
+    border-bottom:1px solid rgba(212,184,150,0.4)!important;
+    font-weight:600!important;
+  }
+  .irow .v{
+    font-size:9pt!important;color:#140800!important;
+    padding:2mm 3mm!important;
+    border-bottom:1px solid rgba(212,184,150,0.4)!important;
+    line-height:1.7!important;
+  }
+
+  /* 運勢環節點 */
+  .fortune-ring{display:flex!important;flex-wrap:wrap!important;gap:2mm!important;}
+  .fnode{
+    font-size:8.5pt!important;
+    padding:1mm 3mm!important;
+    border-radius:10mm!important;
+    border:1px solid!important;
+  }
+  .fnode.good{background:rgba(30,90,30,0.08)!important;border-color:#3d7a3d!important;color:#1e5a1e!important;}
+  .fnode.bad{background:rgba(139,26,26,0.08)!important;border-color:#c94040!important;color:#8b1a1a!important;}
+  .fnode.cur{box-shadow:0 0 0 1.5px #c8952a!important;font-weight:700!important;}
+
+  /* 運勢進度條 */
+  .yun-meter{display:flex!important;align-items:center!important;gap:3mm!important;margin:2mm 0!important;}
+  .yun-track{flex:1!important;height:3mm!important;background:rgba(212,184,150,0.3)!important;border-radius:2mm!important;overflow:hidden!important;}
+  .yun-fill{height:100%!important;border-radius:2mm!important;background:linear-gradient(to right,#8b6800,#c8952a)!important;}
+  .yun-pct{font-size:11pt!important;font-weight:700!important;color:#c8952a!important;width:14mm!important;}
+
+  /* 雙欄 */
+  .two-col{display:grid!important;grid-template-columns:1fr 1fr!important;gap:4mm!important;}
+
+  /* 提示區塊 */
+  .tip{
+    background:rgba(200,149,42,0.06)!important;
+    border-left:3px solid #8b6800!important;
+    padding:2mm 3mm!important;
+    font-size:9pt!important;
+    color:#6b3210!important;
+    line-height:1.8!important;
+    margin-bottom:3mm!important;
+  }
+  .pill{
+    display:inline-block!important;
+    padding:0.5mm 2mm!important;
+    background:rgba(200,149,42,0.12)!important;
+    border-radius:8mm!important;
+    font-size:8pt!important;
+    color:#8b6800!important;
+    border:1px solid rgba(200,149,42,0.25)!important;
+    margin:0.5mm!important;
+  }
+  .badge{
+    font-size:7pt!important;
+    padding:0.5mm 2mm!important;
+    border-radius:8mm!important;
+    background:#c8952a!important;
+    color:#140800!important;
+  }
+  .badge.green{background:#2a6a2a!important;color:white!important;}
+  .badge.red{background:#8b1a1a!important;color:white!important;}
+
+  /* 預測長條圖 */
+  .forecast-chart{overflow:visible!important;margin:3mm 0!important;}
+  .forecast-bars{display:flex!important;gap:2mm!important;align-items:flex-end!important;height:40mm!important;padding:0 1mm!important;}
+  .fc-bar-wrap{flex:1!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:1mm!important;min-width:0!important;}
+  .fc-bar{width:100%!important;border-radius:1mm 1mm 0 0!important;min-height:2mm!important;}
+  .fc-bar.good-bar{background:linear-gradient(to top,#1a5c1a,#4a9a4a)!important;}
+  .fc-bar.bad-bar{background:linear-gradient(to top,#8b1a1a,#c04040)!important;}
+  .fc-bar-pct{font-size:6.5pt!important;position:absolute!important;top:-4mm!important;left:50%!important;transform:translateX(-50%)!important;white-space:nowrap!important;}
+  .fc-bar-pct.good-pct{color:#2a6a2a!important;}
+  .fc-bar-pct.bad-pct{color:#8b1a1a!important;}
+  .fc-year{font-size:6.5pt!important;color:#8a7d6a!important;text-align:center!important;}
+  .fc-yun{font-size:6pt!important;color:#6b3210!important;text-align:center!important;font-weight:600!important;}
+  .forecast-legend{display:flex!important;gap:5mm!important;margin-top:3mm!important;font-size:8pt!important;}
+  .legend-item{display:flex!important;align-items:center!important;gap:1.5mm!important;}
+  .legend-dot{width:3mm!important;height:3mm!important;border-radius:0.5mm!important;}
+
+  /* 分頁斷點 */
+  #t-name{page-break-after:always;}
+  #t-yun{page-break-after:always;}
+  #t-forecast{page-break-after:always;}
+  #t-mkt{page-break-after:always;}
+
+  /* 頁碼頁腳（極小佔位，避免空白頁） */
+  .tab-content::after{
+    content:'';
+    display:block;
+    border-top:1px solid #d4b896;
+    margin-top:2mm;
+    padding-top:0;
+  }
+  /* 最後一個 tab：完全不加頁腳裝飾，且避免觸發空白頁 */
+  #t-wealth{
+    page-break-after:avoid!important;
+    break-after:avoid!important;
+  }
+  #t-wealth::after{
+    display:none!important;
+    margin:0!important;
+    padding:0!important;
+    border:none!important;
+  }
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:820px){
+  .app-layout{grid-template-columns:1fr;}
+  .sidebar{display:none;}
+  .form-row{grid-template-columns:1fr;}
+  .two-col{grid-template-columns:1fr;}
+  .main-content{padding:14px;}
+  .mode-btn{padding:10px 12px;font-size:12px;}
+  .naming-config{grid-template-columns:1fr;}
+  .header-btns{gap:4px;}
+  .hbtn{padding:5px 8px;font-size:10px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN SCREEN ══ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-emblem">九</div>
+    <div class="login-title">九宮命理系統</div>
+    <div class="login-sub">姓名分析 · 命名系統 · 運勢報告</div>
+    <!-- Step 1: 密碼輸入 -->
+    <div id="loginStep1">
+      <div class="login-field">
+        <input type="password" id="loginInput" placeholder="請輸入六位數密碼" maxlength="6"
+          onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="login-btn" onclick="doLogin()">🔑 進入系統</button>
+    </div>
+    <!-- Step 2: 首次登入輸入中文名稱 -->
+    <div id="loginStep2" style="display:none;">
+      <div style="font-size:13px;color:var(--tab-brown);margin-bottom:12px;line-height:1.7;">
+        ✅ 密碼驗證成功<br>
+        <span style="font-size:12px;color:var(--warm);">首次使用請輸入您的中文姓名，作為身份識別用途</span>
+      </div>
+      <div class="login-field">
+        <input type="text" id="userNameInput" placeholder="請輸入您的中文姓名" maxlength="10"
+          style="letter-spacing:4px;" onkeydown="if(event.key==='Enter')doRegisterName()">
+      </div>
+      <button class="login-btn" onclick="doRegisterName()">✅ 確認進入</button>
+    </div>
+    <div class="login-err" id="loginErr"></div>
+    <div class="login-hint">請聯絡管理員取得使用密碼</div>
+  </div>
+</div>
+
+<!-- ══ ADMIN PANEL ══ -->
+<div id="adminPanel">
+  <div class="admin-box">
+    <div class="admin-title">
+      <span>⚙️ 後台管理介面</span>
+      <button class="btn-small outline" onclick="closeAdmin()">✕ 關閉</button>
+    </div>
+    <div class="admin-section">
+      <h4>📋 所有使用者輸入紀錄</h4>
+      <div style="font-size:11px;color:var(--warm);margin-bottom:8px;">顯示所有權限使用者儲存之資料，含輸入者姓名標記</div>
+      <div id="adminAllRecords" style="max-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;"></div>
+      <button class="btn-small outline" onclick="renderAdminAllRecords()" style="margin-top:8px;">🔄 重新整理</button>
+    </div>
+    <div class="admin-section">
+      <h4>目前所有密碼</h4>
+      <div class="pwd-list" id="pwdList"></div>
+    </div>
+    <div class="admin-section">
+      <h4>新增密碼</h4>
+      <div class="admin-form">
+        <div><label style="font-size:11px;color:var(--warm);display:block;margin-bottom:4px;">六位數密碼</label>
+          <input class="admin-input" id="newPwd" placeholder="123456" maxlength="6" style="width:100%"></div>
+        <div><label style="font-size:11px;color:var(--warm);display:block;margin-bottom:4px;">備註</label>
+          <input class="admin-input" id="newNote" placeholder="客戶/用途說明" style="width:100%"></div>
+        <div><label style="font-size:11px;color:var(--warm);display:block;margin-bottom:4px;">效期</label>
+          <select class="admin-select" id="newExpiry" style="width:100%">
+            <option value="0">永久</option>
+            <option value="7">7天</option>
+            <option value="30">30天</option>
+            <option value="90">90天</option>
+            <option value="365">1年</option>
+          </select>
+        </div>
+        <button class="btn-small primary" onclick="addPassword()" style="margin-top:18px;">新增</button>
+      </div>
+    </div>
+    <div class="admin-section">
+      <h4>管理員設定</h4>
+      <div class="admin-form">
+        <div><label style="font-size:11px;color:var(--warm);display:block;margin-bottom:4px;">新管理員密碼</label>
+          <input class="admin-input" id="newAdminPwd" placeholder="新密碼" maxlength="6" style="width:100%"></div>
+        <div><label style="font-size:11px;color:var(--warm);display:block;margin-bottom:4px;">確認密碼</label>
+          <input class="admin-input" id="confirmAdminPwd" placeholder="再輸入一次" maxlength="6" style="width:100%"></div>
+        <div></div>
+        <button class="btn-small primary" onclick="changeAdminPwd()" style="margin-top:18px;">更新</button>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--warm);text-align:center;margin-top:8px;" id="adminMsg"></div>
+  </div>
+</div>
+
+<!-- ══ COVER MODAL ══ -->
+<div id="coverModal">
+  <div class="cover-page" id="coverPage">
+    <div class="cover-inner">
+      <div class="cover-header">
+        <div class="cover-logo">九</div>
+        <div class="cover-title-main">九宮命理分析報告</div>
+        <div class="cover-title-sub">JIUGONG METAPHYSICS ANALYSIS REPORT</div>
+        <div class="cover-deco">
+          <div class="cover-deco-line"></div>
+          <div class="cover-deco-sym">☯</div>
+          <div class="cover-deco-line"></div>
+        </div>
+      </div>
+      <div class="cover-info-grid">
+        <div class="cover-info-item">
+          <div class="cover-info-label">姓　名</div>
+          <div class="cover-info-value large" id="coverName">—</div>
+        </div>
+        <div class="cover-info-item">
+          <div class="cover-info-label">出生年月日</div>
+          <div class="cover-info-value" id="coverDob" style="font-size:15px;">—</div>
+        </div>
+        <div class="cover-info-item">
+          <div class="cover-info-label">性　別</div>
+          <div class="cover-info-value" id="coverGender">—</div>
+        </div>
+        <div class="cover-info-item">
+          <div class="cover-info-label">命　宮</div>
+          <div class="cover-info-value" id="coverMingGong">—</div>
+        </div>
+        <div class="cover-info-item">
+          <div class="cover-info-label">心屬五行</div>
+          <div class="cover-info-value" id="coverXin">—</div>
+        </div>
+        <div class="cover-info-item">
+          <div class="cover-info-label">魂屬五行</div>
+          <div class="cover-info-value" id="coverHun">—</div>
+        </div>
+      </div>
+      <div class="cover-analyst">
+        <div class="cover-analyst-field">
+          <div class="cover-analyst-label">分析報告標題</div>
+          <input type="text" id="coverReportTitle" value="九宮命理個人分析報告" style="border:none;border-bottom:1px solid var(--border);background:transparent;font-size:14px;color:var(--ink);font-family:'Noto Serif TC',serif;padding:2px 0;width:100%;">
+        </div>
+        <div class="cover-analyst-field">
+          <div class="cover-analyst-label">報告提供者</div>
+          <input type="text" id="coverAnalyst" placeholder="命理師/機構名稱" style="border:none;border-bottom:1px solid var(--border);background:transparent;font-size:14px;color:var(--ink);font-family:'Noto Serif TC',serif;padding:2px 0;width:100%;">
+        </div>
+        <div class="cover-analyst-field">
+          <div class="cover-analyst-label">報告日期</div>
+          <input type="text" id="coverDate" style="border:none;border-bottom:1px solid var(--border);background:transparent;font-size:14px;color:var(--ink);font-family:'Noto Serif TC',serif;padding:2px 0;width:100%;">
+        </div>
+        <div class="cover-analyst-field">
+          <div class="cover-analyst-label">聯絡方式</div>
+          <input type="text" id="coverContact" placeholder="電話/LINE/地址" style="border:none;border-bottom:1px solid var(--border);background:transparent;font-size:14px;color:var(--ink);font-family:'Noto Serif TC',serif;padding:2px 0;width:100%;">
+        </div>
+      </div>
+      <div class="cover-footer">
+        本報告依九宮洛書五行理論推演，僅供參考，實際際遇請自行衡量。<br>
+        未經授權請勿轉載複製
+        <div class="cover-seal">
+          <svg width="110" height="110" viewBox="218 32 242 242" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="seal_g" patternUnits="userSpaceOnUse" width="3" height="3">
+      <path d="M0 3L3 0M-1 1L1-1M2 4L4 2" stroke="rgba(60,0,0,0.13)" stroke-width="0.5" fill="none"/>
+    </pattern>
+  </defs>
+  <rect x="233" y="47" width="220" height="220" rx="7" fill="#4a0000" opacity="0.3"/>
+  <rect x="228" y="42" width="220" height="220" rx="6" fill="#8b1a1a"/>
+  <rect x="236" y="50" width="204" height="204" rx="4" fill="#f0e8d8"/>
+  <rect x="242" y="56" width="192" height="192" rx="3" fill="#b22222"/>
+  <rect x="242" y="56" width="192" height="192" rx="3" fill="url(#seal_g)" opacity="0.8"/>
+  <rect x="248" y="62" width="180" height="180" rx="1" fill="none" stroke="#fde8d8" stroke-width="2.5" opacity="0.6"/>
+  <rect x="253" y="67" width="170" height="170" rx="1" fill="none" stroke="#fde8d8" stroke-width="1.2" opacity="0.4"/>
+  <line x1="338" y1="72" x2="338" y2="232" stroke="#fde8d8" stroke-width="1.5" opacity="0.35"/>
+  <line x1="253" y1="152" x2="423" y2="152" stroke="#fde8d8" stroke-width="1.5" opacity="0.35"/>
+  <text x="295" y="118" text-anchor="middle" dominant-baseline="middle" font-family="'Ma Shan Zheng','Noto Serif TC',serif" font-size="72" font-weight="900" fill="#fdf5ec" opacity="0.96">九</text>
+  <text x="381" y="118" text-anchor="middle" dominant-baseline="middle" font-family="'Ma Shan Zheng','Noto Serif TC',serif" font-size="72" font-weight="900" fill="#fdf5ec" opacity="0.96">宮</text>
+  <text x="295" y="196" text-anchor="middle" dominant-baseline="middle" font-family="'Ma Shan Zheng','Noto Serif TC',serif" font-size="72" font-weight="900" fill="#fdf5ec" opacity="0.96">命</text>
+  <text x="381" y="196" text-anchor="middle" dominant-baseline="middle" font-family="'Ma Shan Zheng','Noto Serif TC',serif" font-size="72" font-weight="900" fill="#fdf5ec" opacity="0.96">理</text>
+  <g stroke="#fde8d8" stroke-width="2.8" fill="none" opacity="0.6">
+    <path d="M255 69 L255 82 M255 69 L268 69"/>
+    <path d="M421 69 L421 82 M421 69 L408 69"/>
+    <path d="M255 229 L255 216 M255 229 L268 229"/>
+    <path d="M421 229 L421 216 M421 229 L408 229"/>
+  </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="cover-actions">
+      <button class="btn btn-outline" onclick="document.getElementById('coverModal').classList.remove('show')">關閉</button>
+      <button class="btn btn-primary" onclick="printCover()">🖨 列印含封面</button>
+      <button class="btn btn-pdf" onclick="exportPDF()">📄 匯出PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PDF EXPORT MODAL ══ -->
+<div id="pdfModal">
+  <div class="pdf-box">
+    <h3>📄 匯出 PDF 報告</h3>
+    <p style="font-size:12px;color:var(--warm);margin-bottom:16px;">即將開啟列印對話框，請選擇「另存為PDF」</p>
+    <div style="display:flex;gap:8px;justify-content:center;">
+      <button class="btn btn-outline" onclick="document.getElementById('pdfModal').classList.remove('show')">取消</button>
+      <button class="btn btn-pdf" onclick="confirmExportPDF()">📄 確認匯出PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ HEADER ══ -->
+<header class="app-header" id="mainHeader" style="display:none;">
+  <div class="logo">
+    <div class="logo-emblem">九</div>
+    <div class="logo-text">
+      <h1>九宮命理</h1>
+      <p>姓名分析 · 命名系統</p>
+    </div>
+  </div>
+  <div class="header-btns">
+    <span id="headerUserInfo" style="font-size:11px;color:var(--gold-light);letter-spacing:1px;padding:4px 8px;background:rgba(200,149,42,0.08);border:1px solid rgba(200,149,42,0.2);border-radius:4px;"></span>
+    <button class="hbtn" onclick="showSaveModal()">💾 儲存</button>
+    <button class="hbtn" onclick="showCover()">📋 封面預覽</button>
+    <button class="hbtn primary" onclick="window.print()">🖨 列印</button>
+    <button class="hbtn btn-pdf" onclick="showPDFModal()" style="background:rgba(139,26,26,0.2);color:#e08080;border-color:rgba(139,26,26,0.4);">📄 PDF</button>
+    <button class="hbtn danger-btn" id="adminBtn" onclick="openAdmin()" style="display:none;">⚙️ 後台</button>
+  </div>
+</header>
+
+<nav class="mode-bar" id="mainNav" style="display:none;">
+  <button class="mode-btn active" onclick="switchMode('analyze',this)"><span class="mode-icon">🔍</span>姓名解析</button>
+  <button class="mode-btn" onclick="switchMode('naming',this)"><span class="mode-icon">✍️</span>寶寶命名</button>
+</nav>
+
+<div class="app-layout" id="mainLayout" style="display:none;">
+  <aside class="sidebar">
+    <div class="sidebar-label">功能導覽</div>
+    <div class="sidebar-item active" onclick="scrollTo('inputArea')">✏️ 資料輸入</div>
+    <div class="sidebar-item" onclick="scrollTo('resultArea')">📊 分析結果</div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-label">儲存名單 <span id="savedCount" style="color:var(--gold);font-size:10px;"></span></div>
+    <div class="saved-list" id="savedList"><div class="saved-empty">尚無儲存資料</div></div>
+    <div class="sidebar-divider"></div>
+    <div style="padding:8px 16px;font-size:10px;color:var(--warm);line-height:2;">
+      依姓名筆劃與生辰<br>推算五行命格、流年<br>運勢及人際管理策略
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <!-- ══ MODE: 姓名解析 ══ -->
+    <div class="mode-panel active" id="panel-analyze">
+      <div class="input-card" id="inputArea">
+        <div class="card-heading">📋 基本資料輸入</div>
+        <div class="form-row">
+          <div class="fgroup">
+            <label>姓名（中文）</label>
+            <input type="text" id="nameInput" class="big-name" placeholder="林大德" maxlength="4" onkeydown="if(event.key==='Enter')analyze()">
+          </div>
+          <div class="fgroup">
+            <label>出生年月日（民國六或七位）</label>
+            <input type="text" id="dobInput" placeholder="請輸入民國六或七位數字" maxlength="7" onkeydown="if(event.key==='Enter')analyze()">
+          </div>
+          <div class="fgroup">
+            <label>性別</label>
+            <select id="genderInput" style="padding:9px 12px;border:1px solid var(--border);border-radius:6px;background:var(--cream);font-size:13px;color:var(--ink);">
+              <option value="m">男</option>
+              <option value="f">女</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="analyze()">🔍 開始解析</button>
+          <button class="btn btn-outline" onclick="clearAnalysis()">清除</button>
+          <span id="errMsg" class="err"></span>
+        </div>
+      </div>
+
+      <div class="result-section" id="resultArea">
+        <div class="tab-bar">
+          <button class="tab-btn active" onclick="switchTab('t-name',this)">🔢 姓名剖析</button>
+          <button class="tab-btn" onclick="switchTab('t-yun',this)">🌊 運勢分析</button>
+          <button class="tab-btn" onclick="switchTab('t-forecast',this)">📈 十年波段</button>
+          <button class="tab-btn" onclick="switchTab('t-mkt',this)">💼 行銷洞察</button>
+          <button class="tab-btn" onclick="switchTab('t-mgmt',this)">🏛 管理策略</button>
+          <button class="tab-btn" onclick="switchTab('t-self',this)">⚙️ 自我經營</button>
+          <button class="tab-btn" onclick="switchTab('t-wealth',this)">💰 財位格局</button>
+        </div>
+
+        <!-- Tab: 姓名剖析 -->
+        <div class="tab-content active" id="t-name">
+          <div class="stats-row" id="nameStats"></div>
+          <div class="two-col">
+            <div class="acard">
+              <h3>洛書九宮定位 <span class="badge" id="palaceBadge"></span></h3>
+              <div class="palace-grid" id="palaceGrid"></div>
+            </div>
+            <div class="acard">
+              <h3>命格核心資訊</h3>
+              <div class="igrid" id="mingGeInfo"></div>
+            </div>
+          </div>
+          <div class="acard"><h3>財格與庫格剖析</h3><div class="igrid" id="caiGeInfo"></div></div>
+        </div>
+
+        <!-- Tab: 運勢分析 -->
+        <div class="tab-content" id="t-yun">
+          <div class="acard">
+            <h3>今年流年運勢 <span class="badge" id="yunBadge"></span></h3>
+            <div id="yunMain"></div>
+          </div>
+          <div class="acard">
+            <h3>十年大運週期循環</h3>
+            <div class="fortune-ring" id="fortuneRing"></div>
+          </div>
+          <div class="acard"><h3>轉運關鍵行動</h3><div id="gaiyunContent"></div></div>
+        </div>
+
+        <!-- Tab: 十年波段預告 -->
+        <div class="tab-content" id="t-forecast">
+          <div class="acard">
+            <h3>📈 未來10年運勢波段預告圖示</h3>
+            <div style="font-size:12px;color:var(--warm);margin-bottom:16px;">依九宮大運週期推算，綠色為旺運年份，紅色為弱運年份，可提前規劃人生佈局。</div>
+            <div class="forecast-chart">
+              <div class="forecast-bars" id="forecastBars"></div>
+            </div>
+            <div class="forecast-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:#4a9a4a;"></div><span style="font-size:11px;color:var(--warm);">旺運時期</span></div>
+              <div class="legend-item"><div class="legend-dot" style="background:#c04040;"></div><span style="font-size:11px;color:var(--warm);">弱運時期</span></div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--gold);border-radius:50%;"></div><span style="font-size:11px;color:var(--warm);">★ 當前年份</span></div>
+            </div>
+          </div>
+          <div class="acard">
+            <h3>📋 逐年運勢說明</h3>
+            <div id="forecastDetail"></div>
+          </div>
+        </div>
+
+        <!-- Tab: 行銷洞察 -->
+        <div class="tab-content" id="t-mkt">
+          <div class="two-col">
+            <div class="acard"><h3>心屬特質（主）<span class="badge">六成影響</span></h3><div class="igrid" id="mktMain"></div></div>
+            <div class="acard"><h3>魂屬特質（輔）<span class="badge">四成影響</span></h3><div class="igrid" id="mktSub"></div></div>
+          </div>
+          <div class="acard"><h3>財富觀與消費傾向</h3><div id="mktMoney"></div></div>
+        </div>
+
+        <!-- Tab: 管理策略 -->
+        <div class="tab-content" id="t-mgmt">
+          <div class="two-col">
+            <div class="acard"><h3>心屬管理分析（主）<span class="badge">六成影響</span></h3><div class="igrid" id="mgmtMain"></div></div>
+            <div class="acard"><h3>魂屬管理分析（輔）<span class="badge">四成影響</span></h3><div class="igrid" id="mgmtSub"></div></div>
+          </div>
+          <div class="acard"><h3>招攬時機與方法</h3><div id="mgmtRecruit"></div></div>
+        </div>
+
+        <!-- Tab: 自我經營 -->
+        <div class="tab-content" id="t-self">
+          <div class="two-col">
+            <div class="acard"><h3>心屬個性解析（主）</h3><div class="igrid" id="selfMain"></div></div>
+            <div class="acard"><h3>魂屬個性解析（輔）</h3><div class="igrid" id="selfSub"></div></div>
+          </div>
+          <div class="acard"><h3>運勢操作方針</h3><div id="selfOps"></div></div>
+        </div>
+
+        <!-- Tab: 財位格局 -->
+        <div class="tab-content" id="t-wealth">
+          <div class="two-col">
+            <div class="acard">
+              <h3>財位布置方位</h3>
+              <div class="igrid">
+                <div class="irow"><div class="k">正東</div><div class="v">屬兔、羊、豬者 — 紫晶洞或聚寶盆最宜</div></div>
+                <div class="irow"><div class="k">正西</div><div class="v">屬雞、牛、蛇者 — 紫晶洞或聚寶盆最宜</div></div>
+                <div class="irow"><div class="k">正南</div><div class="v">屬馬、狗、虎者 — 紫晶洞或聚寶盆最宜</div></div>
+                <div class="irow"><div class="k">正北</div><div class="v">屬鼠、龍、猴者 — 紫晶洞或聚寶盆最宜</div></div>
+              </div>
+              <div class="tip" style="margin-top:10px;">擇吉日佈置：農民曆宜祭祀、祈福，且不沖本人生肖日為佳。</div>
+            </div>
+            <div class="acard">
+              <h3>桃花位擺設</h3>
+              <div class="igrid">
+                <div class="irow"><div class="k">正東</div><div class="v">屬虎、馬、狗者 — 男置粉晶，女擺鮮花</div></div>
+                <div class="irow"><div class="k">正西</div><div class="v">屬猴、鼠、龍者 — 男置粉晶，女擺鮮花</div></div>
+                <div class="irow"><div class="k">正南</div><div class="v">屬蛇、雞、牛者 — 男置粉晶，女擺鮮花</div></div>
+                <div class="irow"><div class="k">正北</div><div class="v">屬豬、兔、羊者 — 男置粉晶，女擺鮮花</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="acard">
+            <h3>安床方位要訣</h3>
+            <div class="igrid">
+              <div class="irow"><div class="k">北方（鼠）</div><div class="v">腳部忌朝正北方向</div></div>
+              <div class="irow"><div class="k">東北（牛、虎）</div><div class="v">忌朝東北方臥睡</div></div>
+              <div class="irow"><div class="k">正東（兔）</div><div class="v">忌朝正東方向</div></div>
+              <div class="irow"><div class="k">東南（龍、蛇）</div><div class="v">忌朝東南方向</div></div>
+              <div class="irow"><div class="k">正南（馬）</div><div class="v">忌朝正南方向</div></div>
+              <div class="irow"><div class="k">西南（羊、猴）</div><div class="v">忌朝西南方向</div></div>
+              <div class="irow"><div class="k">正西（雞）</div><div class="v">忌朝正西方向</div></div>
+              <div class="irow"><div class="k">西北（狗、豬）</div><div class="v">忌朝西北方向</div></div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /resultArea -->
+    </div><!-- /panel-analyze -->
+
+    <!-- ══ MODE: 寶寶命名 ══ -->
+    <div class="mode-panel" id="panel-naming">
+      <div class="input-card">
+        <div class="card-heading">✍️ 命名條件設定</div>
+        <p class="naming-subtitle">輸入姓氏及寶寶資訊，系統將依九宮五行原理推薦最佳名字組合，並評分分析各候選名。</p>
+        <div style="margin-top:16px;" class="naming-config">
+          <div class="fgroup">
+            <label>姓氏（一字）</label>
+            <input type="text" id="nSurname" class="big-name" placeholder="林" maxlength="1">
+          </div>
+          <div class="fgroup">
+            <label>性別</label>
+            <select id="nGender" onchange="renderLuckyChars()" style="padding:9px 12px;border:1px solid var(--border);border-radius:6px;background:var(--cream);font-size:13px;color:var(--ink);">
+              <option value="m">男</option>
+              <option value="f">女</option>
+            </select>
+          </div>
+          <div class="fgroup">
+            <label>出生年月日（民國六或七位）</label>
+            <input type="text" id="nDob" placeholder="請輸入民國六或七位數字" maxlength="7">
+          </div>
+          <div class="fgroup">
+            <label>希望字數</label>
+            <select id="nChars" style="padding:9px 12px;border:1px solid var(--border);border-radius:6px;background:var(--cream);font-size:13px;color:var(--ink);">
+              <option value="2">二字名（共三字）</option>
+              <option value="1">一字名（共二字）</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-bottom:12px;">
+          <div class="fgroup" style="margin-bottom:6px;"><label>期望特質（可多選）</label></div>
+          <div class="name-goal-grid">
+            <div class="goal-chip" onclick="toggleGoal(this,'財運亨通')">💰 財運亨通</div>
+            <div class="goal-chip" onclick="toggleGoal(this,'貴人相助')">🌟 貴人相助</div>
+            <div class="goal-chip" onclick="toggleGoal(this,'事業有成')">📈 事業有成</div>
+            <div class="goal-chip" onclick="toggleGoal(this,'健康平安')">🌿 健康平安</div>
+            <div class="goal-chip" onclick="toggleGoal(this,'智慧聰穎')">🎓 智慧聰穎</div>
+            <div class="goal-chip" onclick="toggleGoal(this,'人緣廣闊')">🤝 人緣廣闊</div>
+          </div>
+        </div>
+
+        <!-- 吉祥字庫 -->
+        <div class="lucky-section">
+          <h4>✨ 吉祥字庫 — 點選加入第二字或第三字候選</h4>
+          <div style="font-size:11px;color:var(--warm);margin-bottom:8px;">選取偏好的吉祥字，系統將優先排列含有這些字的名字組合</div>
+          <div class="lucky-tabs">
+            <button class="lucky-tab active" onclick="switchLuckyTab(this,'all')">全部</button>
+            <button class="lucky-tab" onclick="switchLuckyTab(this,'pos2')">第二字（名1）</button>
+            <button class="lucky-tab" onclick="switchLuckyTab(this,'pos3')">第三字（名2）</button>
+            <button class="lucky-tab" onclick="switchLuckyTab(this,'fav')">收藏字</button>
+          </div>
+          <div class="lucky-chars" id="luckyCharsDisplay"></div>
+          <div style="margin-top:10px;">
+            <div style="font-size:11px;color:var(--warm);margin-bottom:6px;">已選取的吉祥字：</div>
+            <div class="pinned-chars" id="pinnedChars"><span style="font-size:11px;color:rgba(138,125,106,0.5);">尚未選取，系統將自動推薦最優組合</span></div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-green" onclick="generateNames()">✨ 智能推薦命名</button>
+          <button class="btn btn-outline" onclick="clearNaming()">清除</button>
+          <span id="nErrMsg" class="err"></span>
+        </div>
+      </div>
+
+      <div id="namingResult" style="display:none;">
+        <div class="acard">
+          <h3>📊 命名評分準則說明</h3>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:6px;">
+            <div class="tip">✦ <strong>命宮格局</strong>：命宮數對應吉星，得1-4及6-8宮最佳，避5（困象）</div>
+            <div class="tip">✦ <strong>五行相生</strong>：心屬與魂屬五行相生者加分，相剋者扣分</div>
+            <div class="tip">✦ <strong>財格有財</strong>：總筆劃%10屬有財格者評分較高</div>
+            <div class="tip">✦ <strong>筆劃平衡</strong>：各字筆劃均衡，避免差距過大影響格局</div>
+          </div>
+        </div>
+        <div id="namingLoading" class="naming-progress" style="display:none;">
+          <div class="spinner"></div>
+          <div>正在推演命格組合中…</div>
+        </div>
+        <h3 style="font-family:'Noto Serif TC',serif;color:var(--gold);margin:16px 0 8px;font-size:16px;letter-spacing:2px;">推薦名字候選</h3>
+        <div class="candidates-grid" id="candidatesGrid"></div>
+        <div id="candDetail" style="display:none;"></div>
+      </div>
+    </div><!-- /panel-naming -->
+
+  </main>
+</div>
+
+<!-- Save Modal -->
+<div class="modal-overlay" id="saveModal">
+  <div class="modal">
+    <h3>💾 儲存此筆資料</h3>
+    <p style="font-size:12px;color:var(--warm);margin-bottom:12px;">為這筆分析記錄命名（資料儲存於本機）</p>
+    <input type="text" id="saveLabel" placeholder="例：客戶王先生、同事小美…">
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeSaveModal()" style="padding:8px 16px;">取消</button>
+      <button class="btn btn-primary" onclick="confirmSave()" style="padding:8px 16px;">確認儲存</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// PASSWORD / AUTH SYSTEM
+// ═══════════════════════════════════════════════════════
+const DEFAULT_ADMIN_PWD = '888888'; // 預設最高管理者密碼
+const STORAGE_KEY_PWDS = 'jiugong_pwds_v2';
+const STORAGE_KEY_ADMIN = 'jiugong_admin_v2';
+const STORAGE_KEY_SESSION = 'jiugong_session_v2';
+const STORAGE_KEY_USER_NAMES = 'jiugong_user_names_v2'; // {code: '中文名'}
+const STORAGE_KEY_ALL_RECORDS = 'jiugong_all_records_v2'; // 所有使用者資料，附帶輸入者
+
+function getPwdList() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY_PWDS) || '[]'); } catch { return []; }
+}
+function setPwdList(list) { localStorage.setItem(STORAGE_KEY_PWDS, JSON.stringify(list)); }
+function getAdminPwd() { return localStorage.getItem(STORAGE_KEY_ADMIN) || DEFAULT_ADMIN_PWD; }
+function setAdminPwd(p) { localStorage.setItem(STORAGE_KEY_ADMIN, p); }
+
+// 使用者名稱管理
+function getUserNames() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY_USER_NAMES) || '{}'); } catch { return {}; }
+}
+function setUserName(code, name) {
+  const names = getUserNames();
+  names[code] = name;
+  localStorage.setItem(STORAGE_KEY_USER_NAMES, JSON.stringify(names));
+}
+function getUserNameByCode(code) {
+  return getUserNames()[code] || null;
+}
+
+// 全域紀錄管理（管理員用）
+function getAllRecords() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY_ALL_RECORDS) || '[]'); } catch { return []; }
+}
+function setAllRecords(arr) { localStorage.setItem(STORAGE_KEY_ALL_RECORDS, JSON.stringify(arr)); }
+
+function initDefaultPwds() {
+  const list = getPwdList();
+  if (list.length === 0) {
+    setPwdList([
+      {code:'168168', note:'預設通用密碼', expiry:0, role:'user', created: new Date().toISOString()},
+      {code:'520520', note:'體驗用密碼（30天）', expiry:30, role:'user', created: new Date().toISOString()},
+    ]);
+  }
+}
+
+function checkPassword(input) {
+  const adminPwd = getAdminPwd();
+  if (input === adminPwd) return {valid:true, role:'admin'};
+  const list = getPwdList();
+  const now = new Date();
+  for (const item of list) {
+    if (item.code === input) {
+      if (item.expiry === 0) return {valid:true, role:item.role||'user', code:item.code};
+      const created = new Date(item.created);
+      const diffDays = (now - created) / (1000*60*60*24);
+      if (diffDays <= item.expiry) return {valid:true, role:item.role||'user', code:item.code};
+      return {valid:false, reason:'密碼已過期'};
+    }
+  }
+  return {valid:false, reason:'密碼錯誤'};
+}
+
+let _pendingLoginResult = null; // 暫存登入結果，等待輸入名稱
+
+function doLogin() {
+  const input = document.getElementById('loginInput').value.trim();
+  const err = document.getElementById('loginErr');
+  if (!input || input.length !== 6) { err.textContent = '請輸入六位數密碼'; return; }
+  const result = checkPassword(input);
+  if (result.valid) {
+    err.textContent = '';
+    const codeKey = result.role === 'admin' ? '__admin__' : (result.code || input);
+    const existingName = getUserNameByCode(codeKey);
+    if (!existingName) {
+      // 首次登入：需輸入中文名稱
+      _pendingLoginResult = { ...result, codeKey };
+      document.getElementById('loginStep1').style.display = 'none';
+      document.getElementById('loginStep2').style.display = 'block';
+      document.getElementById('userNameInput').focus();
+    } else {
+      // 已有名稱：直接進入
+      _pendingLoginResult = null;
+      enterSystem(result.role, existingName, codeKey);
+    }
+  } else {
+    err.textContent = result.reason || '密碼錯誤，請重試';
+    document.getElementById('loginInput').value = '';
+    document.getElementById('loginInput').focus();
+  }
+}
+
+function doRegisterName() {
+  const nameInput = document.getElementById('userNameInput').value.trim();
+  const err = document.getElementById('loginErr');
+  if (!nameInput) { err.textContent = '請輸入中文姓名'; return; }
+  if (!/[\u4e00-\u9fa5]/.test(nameInput)) { err.textContent = '請輸入中文姓名'; return; }
+  // 儲存名稱並進入系統
+  setUserName(_pendingLoginResult.codeKey, nameInput);
+  enterSystem(_pendingLoginResult.role, nameInput, _pendingLoginResult.codeKey);
+  _pendingLoginResult = null;
+}
+
+function enterSystem(role, userName, codeKey) {
+  sessionStorage.setItem(STORAGE_KEY_SESSION, JSON.stringify({role, userName, codeKey, time:Date.now()}));
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('mainHeader').style.display = 'flex';
+  document.getElementById('mainNav').style.display = 'flex';
+  document.getElementById('mainLayout').style.display = 'grid';
+  if (role === 'admin') {
+    document.getElementById('adminBtn').style.display = 'inline-block';
+  }
+  // 更新頁首顯示使用者名稱
+  updateHeaderUserInfo(userName, role);
+  loadSavedList();
+  document.getElementById('nameInput').value = '';
+  document.getElementById('dobInput').value = '';
+}
+
+function updateHeaderUserInfo(userName, role) {
+  const el = document.getElementById('headerUserInfo');
+  if (el) {
+    el.textContent = `👤 ${userName}${role==='admin'?' ［管理者］':''}`;
+  }
+}
+
+// Check session on load
+function checkSession() {
+  initDefaultPwds();
+  try {
+    const sess = JSON.parse(sessionStorage.getItem(STORAGE_KEY_SESSION));
+    if (sess && (Date.now() - sess.time < 4*60*60*1000)) { // 4 hours
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('mainHeader').style.display = 'flex';
+      document.getElementById('mainNav').style.display = 'flex';
+      document.getElementById('mainLayout').style.display = 'grid';
+      if (sess.role === 'admin') document.getElementById('adminBtn').style.display = 'inline-block';
+      updateHeaderUserInfo(sess.userName || '使用者', sess.role);
+      loadSavedList();
+      return;
+    }
+  } catch{}
+}
+
+// 取得目前登入的 session
+function getCurrentSession() {
+  try { return JSON.parse(sessionStorage.getItem(STORAGE_KEY_SESSION) || '{}'); } catch { return {}; }
+}
+
+// Admin panel functions
+function openAdmin() {
+  const sess = getCurrentSession();
+  if (sess.role !== 'admin') { showToast('需要最高管理者權限'); return; }
+  renderPwdList();
+  renderAdminAllRecords();
+  document.getElementById('adminPanel').classList.add('show');
+}
+function closeAdmin() { document.getElementById('adminPanel').classList.remove('show'); }
+
+function renderAdminAllRecords() {
+  const records = getAllRecords();
+  const el = document.getElementById('adminAllRecords');
+  if (!records.length) { el.innerHTML = '<div style="font-size:12px;color:var(--warm);padding:8px;">尚無任何使用者輸入紀錄</div>'; return; }
+  el.innerHTML = records.map((r,i) => `
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--cream);border:1px solid var(--border);border-radius:5px;font-size:12px;">
+      <div style="flex:1;">
+        <div style="font-weight:600;color:var(--tab-brown);">${r.label||r.name}</div>
+        <div style="color:var(--warm);margin-top:2px;">${r.name} · 民國${r.dob&&r.dob.length===7?r.dob.substring(0,3):r.dob?r.dob.substring(0,2):''}年</div>
+      </div>
+      <div style="font-size:11px;color:var(--gold-dark);background:rgba(200,149,42,0.1);border:1px solid rgba(200,149,42,0.3);border-radius:12px;padding:2px 8px;">
+        📝 ${r.inputBy||'未知'}
+      </div>
+      <div style="font-size:10px;color:var(--warm);">${r.savedAt?new Date(r.savedAt).toLocaleDateString('zh-TW'):''}</div>
+    </div>`).join('');
+}
+
+function renderPwdList() {
+  const list = getPwdList();
+  const adminPwd = getAdminPwd();
+  const userNames = getUserNames();
+  const now = new Date();
+  const adminName = userNames['__admin__'] ? `（${userNames['__admin__']}）` : '';
+  let html = `<div class="pwd-item">
+    <div class="pwd-code">${adminPwd}</div>
+    <div class="pwd-meta">最高管理者密碼（永久有效）${adminName}</div>
+    <div class="pwd-role admin-role">管理者</div>
+  </div>`;
+  for (let i=0;i<list.length;i++) {
+    const item = list[i];
+    let status = '永久有效';
+    if (item.expiry > 0) {
+      const created = new Date(item.created);
+      const diffDays = Math.floor((now - created)/(1000*60*60*24));
+      const remain = item.expiry - diffDays;
+      status = remain > 0 ? `剩餘 ${remain} 天` : '⚠ 已過期';
+    }
+    const uname = userNames[item.code] ? `（${userNames[item.code]}）` : '（尚未登入）';
+    html += `<div class="pwd-item">
+      <div class="pwd-code">${item.code}</div>
+      <div class="pwd-meta">${item.note||''} · ${status} · ${uname}</div>
+      <div class="pwd-role">${item.role||'user'}</div>
+      <button class="pwd-del-btn" onclick="deletePwd(${i})">✕</button>
+    </div>`;
+  }
+  document.getElementById('pwdList').innerHTML = html;
+}
+
+function addPassword() {
+  const code = document.getElementById('newPwd').value.trim();
+  const note = document.getElementById('newNote').value.trim();
+  const expiry = parseInt(document.getElementById('newExpiry').value);
+  if (!code || code.length !== 6) { document.getElementById('adminMsg').textContent = '密碼需為六位數'; return; }
+  const list = getPwdList();
+  if (list.find(p=>p.code===code) || code===getAdminPwd()) {
+    document.getElementById('adminMsg').textContent = '此密碼已存在'; return;
+  }
+  list.push({code, note, expiry, role:'user', created:new Date().toISOString()});
+  setPwdList(list);
+  renderPwdList();
+  document.getElementById('newPwd').value = '';
+  document.getElementById('newNote').value = '';
+  document.getElementById('adminMsg').textContent = '✅ 已新增密碼：' + code;
+}
+
+function deletePwd(idx) {
+  const list = getPwdList();
+  list.splice(idx,1);
+  setPwdList(list);
+  renderPwdList();
+  document.getElementById('adminMsg').textContent = '已刪除';
+}
+
+function changeAdminPwd() {
+  const np = document.getElementById('newAdminPwd').value.trim();
+  const cp = document.getElementById('confirmAdminPwd').value.trim();
+  if (!np || np.length !== 6) { document.getElementById('adminMsg').textContent = '密碼需為六位數'; return; }
+  if (np !== cp) { document.getElementById('adminMsg').textContent = '兩次密碼不符'; return; }
+  setAdminPwd(np);
+  renderPwdList();
+  document.getElementById('adminMsg').textContent = '✅ 管理者密碼已更新為：' + np;
+  document.getElementById('newAdminPwd').value = '';
+  document.getElementById('confirmAdminPwd').value = '';
+}
+
+// ═══════════════════════════════════════════════════════
+// COVER & PDF
+// ═══════════════════════════════════════════════════════
+function showCover() {
+  if (!currentAnalysis) { showToast('請先執行分析'); return; }
+  const d = currentAnalysis;
+  document.getElementById('coverName').textContent = d.name;
+  const dob = d.dob;
+  let dobDisplay;
+  if (dob.length === 7) {
+    dobDisplay = `民國${dob.substring(0,3)}年${dob.substring(3,5)}月${dob.substring(5,7)}日`;
+  } else {
+    dobDisplay = `民國${dob.substring(0,2)}年${dob.substring(2,4)}月${dob.substring(4,6)}日`;
+  }
+  document.getElementById('coverDob').textContent = dobDisplay;
+  document.getElementById('coverGender').textContent = d.gender==='m'?'男':'女';
+  document.getElementById('coverMingGong').textContent = `第 ${d.mingGong} 宮 — ${(STAR_MAP[d.mingGong]||{}).name||''}`;
+  document.getElementById('coverXin').textContent = `${d.xinElement}（${d.xinZhu}宮 · 六成）`;
+  document.getElementById('coverHun').textContent = `${d.hunElement}（${d.hunZhu}宮 · 四成）`;
+  // Set today's date
+  const today = new Date();
+  document.getElementById('coverDate').value = `${today.getFullYear()}年${today.getMonth()+1}月${today.getDate()}日`;
+  document.getElementById('coverModal').classList.add('show');
+}
+
+function printCover() {
+  // 保持封面開啟讓 @media print 能捕捉到
+  showToast('正在開啟列印對話框，請選擇「另存為PDF」');
+  setTimeout(() => {
+    window.print();
+    setTimeout(() => document.getElementById('coverModal').classList.remove('show'), 1000);
+  }, 300);
+}
+
+function showPDFModal() {
+  if (!currentAnalysis) { showToast('請先執行分析'); return; }
+  document.getElementById('pdfModal').classList.add('show');
+}
+
+function exportPDF() {
+  document.getElementById('coverModal').classList.remove('show');
+  setTimeout(() => { showPDFModal(); }, 300);
+}
+
+function confirmExportPDF() {
+  if (!currentAnalysis) return;
+  document.getElementById('pdfModal').classList.remove('show');
+
+  // 確保封面顯示後列印
+  const coverModal = document.getElementById('coverModal');
+  const wasShowing = coverModal.classList.contains('show');
+  coverModal.classList.add('show');
+  showToast('正在開啟列印對話框，請選擇「另存為PDF」');
+  setTimeout(() => {
+    window.print();
+    if (!wasShowing) {
+      setTimeout(() => coverModal.classList.remove('show'), 1000);
+    }
+  }, 500);
+}
+
+// ═══════════════════════════════════════════════════════
+// LUCKY CHARS SYSTEM
+// ═══════════════════════════════════════════════════════
+let pinnedChars = []; // {char, pos} pos: 'pos2' | 'pos3' | 'any'
+let favChars = [];
+let currentLuckyTab = 'all';
+let currentGender = 'm';
+
+function switchLuckyTab(btn, tab) {
+  currentLuckyTab = tab;
+  document.querySelectorAll('.lucky-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderLuckyChars();
+}
+
+function renderLuckyChars() {
+  const gender = document.getElementById('nGender').value || 'm';
+  currentGender = gender;
+  const pools = LUCKY_POOL;
+  let chars = [];
+  
+  if (currentLuckyTab === 'fav') {
+    chars = favChars;
+  } else if (currentLuckyTab === 'pos2') {
+    chars = gender === 'm' ? pools.m2 : pools.f2;
+  } else if (currentLuckyTab === 'pos3') {
+    chars = gender === 'm' ? pools.m3 : pools.f3;
+  } else {
+    // all: combine pos2 + pos3 + extra from name pools
+    const p2 = gender === 'm' ? pools.m2 : pools.f2;
+    const p3 = gender === 'm' ? pools.m3 : pools.f3;
+    const extra = Object.values(NAME_POOL[gender]).flat().filter((c,i,a)=>a.indexOf(c)===i);
+    chars = [...new Set([...p2, ...p3, ...extra])].slice(0, 80);
+  }
+
+  const container = document.getElementById('luckyCharsDisplay');
+  container.innerHTML = chars.map(ch => {
+    const stroke = getStroke(ch);
+    const isPinned = pinnedChars.some(p=>p.char===ch);
+    const isFav = favChars.includes(ch);
+    return `<div class="lucky-char ${isPinned?'selected':''}" onclick="toggleLuckyChar('${ch}',this)" title="${ch}（${stroke||'?'}畫）">
+      ${ch}
+      <span class="lucky-char-stroke">${stroke||'?'}</span>
+    </div>`;
+  }).join('');
+}
+
+function toggleLuckyChar(ch, el) {
+  const idx = pinnedChars.findIndex(p=>p.char===ch);
+  if (idx >= 0) {
+    pinnedChars.splice(idx,1);
+    el.classList.remove('selected');
+  } else {
+    if (pinnedChars.length >= 6) { showToast('最多選6個吉祥字'); return; }
+    const pos = currentLuckyTab === 'pos2' ? 'pos2' : currentLuckyTab === 'pos3' ? 'pos3' : 'any';
+    pinnedChars.push({char:ch, pos});
+    el.classList.add('selected');
+    // Add to favorites
+    if (!favChars.includes(ch)) favChars.push(ch);
+  }
+  renderPinnedChars();
+}
+
+function renderPinnedChars() {
+  const container = document.getElementById('pinnedChars');
+  if (!pinnedChars.length) {
+    container.innerHTML = '<span style="font-size:11px;color:rgba(138,125,106,0.5);">尚未選取，系統將自動推薦最優組合</span>';
+    return;
+  }
+  container.innerHTML = pinnedChars.map((p,i) => `
+    <div class="pinned-char">
+      ${p.char}
+      <span class="pinned-pos">${p.pos==='pos2'?'[名1]':p.pos==='pos3'?'[名2]':'[任]'}</span>
+      <span class="pinned-char-del" onclick="removePinned(${i})">✕</span>
+    </div>`).join('');
+}
+
+function removePinned(i) {
+  pinnedChars.splice(i,1);
+  renderPinnedChars();
+  renderLuckyChars();
+}
+
+// Initialize lucky chars on panel switch
+function initLuckyChars() {
+  renderLuckyChars();
+}
+
+</script>
+<script>
+const STROKE_DB = {
+// ══ 康熙字典筆畫為準 ══
+// 常見康熙筆畫修正（與一般筆順不同者）
+"海":11,"渡":13,"游":13,"湖":13,"浩":11,"洪":10,"清":12,"涵":12,"淵":12,
+"建":9,"延":7,"廷":7,
+"成":7,"戈":4,
+"冰":6,
+"道":13,"遠":14,"運":13,"達":13,"進":12,"遊":13,"逸":12,
+"飛":9,
+"鬼":10,
+"骨":10,
+"高":10,
+"馬":10,"駿":17,"騰":20,
+"魚":11,"魯":15,
+"鳥":11,"鳳":14,"鶴":21,
+"黃":12,"黎":16,
+"黑":12,
+"鼠":13,
+"龍":16,"龜":16,
+"齊":14,
+"齒":15,
+// 1畫
+"一":1,"乙":1,
+// 2畫
+"丁":2,"七":2,"八":2,"九":2,"二":2,"人":2,"入":2,"又":2,"刀":2,"力":2,"十":2,"卜":2,"几":2,"了":2,"乃":2,
+// 3畫
+"三":3,"上":3,"下":3,"丈":3,"丫":3,"丸":3,"久":3,"于":3,"也":3,"乞":3,"亡":3,"兀":3,"勺":3,"千":3,"口":3,"土":3,"士":3,"大":3,"女":3,"山":3,"工":3,"已":3,"巳":3,"己":3,"干":3,"弓":3,"小":3,"寸":3,"川":3,"夕":3,"子":3,"才":3,"及":3,"凡":3,"巾":3,"万":3,"弋":3,
+// 4畫
+"丹":4,"中":4,"仁":4,"介":4,"今":4,"仆":4,"公":4,"六":4,"內":4,"冬":4,"化":4,"午":4,"厄":4,"友":4,"反":4,"天":4,"太":4,"孔":4,"少":4,"心":4,"斗":4,"方":4,"日":4,"木":4,"水":4,"火":4,"父":4,"牛":4,"犬":4,"片":4,"王":4,"元":4,"分":4,"切":4,"引":4,"勻":4,"戈":4,"手":4,"斤":4,"比":4,"牙":4,"爪":4,"云":4,"互":4,"文":4,"勿":4,"予":4,"允":4,"巴":4,"匹":4,"丰":4,"升":4,"壬":4,"支":4,"毛":4,"月":4,"曰":4,"尹":4,"勾":4,"冗":4,"止":4,
+// 5畫
+"世":5,"丘":5,"主":5,"仕":5,"仙":5,"充":5,"兄":5,"令":5,"以":5,"他":5,"付":5,"仟":5,"出":5,"加":5,"北":5,"半":5,"占":5,"去":5,"司":5,"台":5,"句":5,"只":5,"史":5,"另":5,"可":5,"古":5,"叫":5,"外":5,"左":5,"布":5,"平":5,"必":5,"市":5,"幼":5,"弗":5,"弘":5,"正":5,"末":5,"本":5,"未":5,"民":5,"永":5,"玄":5,"玉":5,"甲":5,"申":5,"白":5,"矢":5,"石":5,"示":5,"立":5,"母":5,"目":5,"皮":5,"用":5,"田":5,"生":5,"四":5,"包":5,"卡":5,"且":5,"尼":5,"巧":5,"札":5,"由":5,"仔":5,
+// 6畫
+"伊":6,"伍":6,"伐":6,"伏":6,"休":6,"件":6,"任":6,"仿":6,"份":6,"光":6,"兆":6,"冰":6,"印":6,"危":6,"各":6,"合":6,"吃":6,"同":6,"吐":6,"回":6,"因":6,"地":6,"在":6,"守":6,"安":6,"宇":6,"字":6,"宅":6,"年":6,"成":6,"早":6,"朴":6,"朵":6,"江":6,"汗":6,"死":6,"羽":6,"老":6,"考":6,"耳":6,"肉":6,"自":6,"舌":6,"舟":6,"艾":6,"艮":6,"衣":6,"西":6,"色":6,"虫":6,"血":6,"行":6,"共":6,"名":6,"如":6,"多":6,"帆":6,"忙":6,"有":6,"曲":6,"百":6,"而":6,"至":6,"好":6,"全":6,"先":6,"臣":6,"舟":6,"牟":6,"列":6,"刑":6,"冲":6,"她":6,"寺":6,"列":6,"汐":6,"汝":6,"弟":6,"次":6,"此":6,"林":6,
+// 7畫
+"佑":7,"佐":7,"伸":7,"位":7,"你":7,"作":7,"克":7,"別":7,"兵":7,"利":7,"判":7,"助":7,"努":7,"吩":7,"吹":7,"告":7,"呈":7,"坐":7,"址":7,"妙":7,"妥":7,"志":7,"忘":7,"快":7,"改":7,"材":7,"沃":7,"沉":7,"沙":7,"沈":7,"村":7,"束":7,"每":7,"汪":7,"谷":7,"走":7,"足":7,"身":7,"車":7,"辛":7,"辰":7,"防":7,"阿":7,"局":7,"角":7,"豆":7,"杏":7,"我":7,"形":7,"弄":7,"完":7,"希":7,"含":7,"君":7,"找":7,"把":7,"抓":7,"冷":7,"李":7,"孝":7,"孜":7,"孚":7,"均":7,"坑":7,"坊":7,"妍":7,"妤":7,"彤":7,"芊":7,"芋":7,"芍":7,"芒":7,"芙":7,"芝":7,"芳":7,"芸":7,"芹":7,"見":7,"貝":7,"赤":7,"里":7,"含":7,"坎":7,"佃":7,"佈":7,"伽":7,"佇":7,"佉":7,
+// 8畫
+"典":8,"其":8,"到":8,"和":8,"周":8,"呼":8,"定":8,"官":8,"宗":8,"怡":8,"所":8,"招":8,"拉":8,"拔":8,"抱":8,"注":8,"波":8,"泥":8,"泳":8,"牧":8,"物":8,"知":8,"空":8,"竹":8,"虎":8,"表":8,"金":8,"長":8,"青":8,"非":8,"面":8,"革":8,"魚":8,"鳥":8,"來":8,"依":8,"岳":8,"延":8,"建":8,"彼":8,"念":8,"忽":8,"押":8,"版":8,"法":8,"使":8,"供":8,"侍":8,"保":8,"孟":8,"奇":8,"季":8,"姑":8,"姓":8,"妻":8,"幸":8,"受":8,"果":8,"明":8,"岩":8,"炎":8,"花":8,"雨":8,"采":8,"武":8,"宜":8,"宛":8,"宙":8,"怜":8,"怦":8,"怡":8,"昆":8,"昇":8,"昂":8,"旺":8,"昀":8,"旻":8,"昕":8,"松":8,"林":6,"枝":8,"杰":8,"柔":8,"析":8,"欣":8,"泊":8,"泓":8,"泠":8,"泫":8,"沁":8,"汶":8,"泯":8,"炯":8,"玫":8,"珍":8,"珊":8,"芙":7,"若":8,"茉":8,"茅":8,"虹":8,"侑":8,"佳":8,"佩":8,"佰":8,"典":8,"協":8,"卷":8,"坦":8,"坤":8,"坪":8,"垂":8,"娃":8,"妲":8,"忱":8,"怩":8,"思":8,"拂":8,"拇":8,"旺":8,"昌":8,"易":8,"服":8,"朋":8,"東":8,"棠":8,"杰":8,
+// 9畫
+"便":9,"信":9,"冠":9,"則":9,"前":9,"南":9,"城":9,"室":9,"客":9,"宣":9,"待":9,"後":9,"思":9,"急":9,"星":9,"春":9,"是":9,"柳":9,"看":9,"研":9,"秋":9,"美":9,"計":9,"軍":9,"限":9,"皇":9,"相":9,"盆":9,"紅":9,"約":9,"苦":9,"要":9,"負":9,"某":9,"洋":9,"浩":9,"昱":9,"俊":9,"玲":9,"彥":9,"俠":9,"俐":9,"孩":9,"恆":9,"拜":9,"映":9,"柏":9,"柔":9,"柴":9,"洪":9,"洛":9,"洳":9,"津":9,"泰":9,"炫":9,"玷":9,"珀":9,"珂":9,"珏":9,"珩":9,"看":9,"科":9,"竿":9,"耐":9,"苑":9,"苓":9,"茜":9,"虹":9,"軌":9,"施":9,"昭":9,"昵":9,"昶":9,"是":9,"柳":9,"染":9,"段":9,"界":9,"省":9,"眉":9,"禹":9,"紂":9,"紀":9,"約":9,"紅":9,"背":9,"胎":9,"胥":9,"臭":9,"芸":7,"風":9,"飛":9,"食":9,"首":9,"侯":9,"俗":9,"保":8,"勃":9,"勇":9,"南":9,"厚":9,"咨":9,"哈":9,"哉":9,"姚":9,"姿":9,"婀":9,"娥":9,"宬":9,"封":9,"帥":9,"幽":9,"恢":9,"恩":9,"恬":9,"恭":9,"拱":9,"挑":9,"昊":9,"洽":9,"為":9,
+// 10畫
+"倚":10,"倫":10,"家":10,"海":10,"桃":10,"格":10,"特":10,"益":10,"起":10,"訓":10,"財":10,"院":10,"草":10,"高":10,"神":10,"書":10,"真":10,"站":10,"消":10,"氣":10,"記":10,"根":10,"帝":10,"差":10,"席":10,"庭":10,"紙":10,"酒":10,"烈":10,"馬":10,"員":10,"島":10,"夏":10,"振":10,"修":10,"造":10,"降":10,"陣":10,"恭":10,"哥":10,"拿":10,"除":10,"秘":10,"粉":10,"航":10,"倒":10,"容":10,"宸":10,"浣":10,"涓":10,"涵":10,"浩":10,"海":10,"宮":10,"剛":10,"偉":10,"峰":10,"峻":10,"晉":10,"晏":10,"晟":10,"晗":10,"曜":10,"朗":10,"桐":10,"梓":10,"浦":10,"烊":10,"烝":10,"珮":10,"祐":10,"秦":10,"素":10,"紡":10,"翁":10,"耘":10,"荊":10,"荔":10,"荷":10,"莎":10,"倍":10,"倡":10,"候":10,"倩":10,"倫":10,"們":10,"剛":10,"匪":10,"卿":10,"哲":10,"唐":10,"孫":10,"宰":10,"射":10,"展":10,"師":10,"悄":10,"悟":10,"恕":10,"株":10,"泰":9,"洳":9,"涯":10,"涸":10,"淞":10,"烏":10,"珠":10,"祠":10,"粒":10,"翼":10,"耕":10,"能":10,"脂":10,"莓":10,"莊":10,
+// 11畫
+"健":11,"停":11,"副":11,"務":11,"動":11,"問":11,"商":11,"啟":11,"國":11,"堂":11,"培":11,"密":11,"情":11,"接":11,"探":11,"控":11,"推":11,"排":11,"授":11,"晨":11,"清":11,"現":11,"理":11,"第":11,"統":11,"習":11,"規":11,"責":11,"野":11,"陸":11,"頂":11,"鹿":11,"梅":11,"條":11,"望":11,"術":11,"深":11,"教":11,"產":11,"旋":11,"添":11,"混":11,"涵":10,"婕":11,"婷":11,"婉":11,"娟":11,"婧":11,"悅":11,"啟":11,"彩":11,"捷":11,"敏":11,"淑":11,"淵":11,"渠":11,"涼":11,"涵":10,"烽":11,"甜":11,"瓶":11,"畢":11,"符":11,"笛":11,"粗":11,"紹":11,"累":11,"莉":11,"莉":11,"莊":10,"設":11,"許":11,"逢":11,"都":11,"釣":11,"陳":11,"雪":11,"魚":8,"鳥":8,"麻":11,"偵":11,"傲":11,"傑":12,"假":11,"偸":11,"側":11,"偶":11,"凰":11,"匙":11,"唯":11,"國":11,"堅":11,"堂":11,"婚":11,"婦":11,"寅":11,"崇":11,"崑":11,"惟":11,"情":11,"授":11,"晶":12,"曹":11,"梁":11,"梢":11,"涯":10,"淒":11,"淡":11,"淺":11,"淮":11,"淳":12,"淼":12,"烹":11,"珵":11,"略":11,"盔":11,"祭":11,"笑":10,"粒":10,"脫":11,"莫":11,"莙":11,"菜":11,"設":11,
+// 12畫
+"博":12,"創":12,"備":12,"喜":12,"喝":12,"富":12,"就":12,"斯":12,"期":12,"森":12,"無":12,"然":12,"登":12,"發":12,"善":12,"測":12,"短":12,"策":12,"結":12,"紫":12,"進":12,"雲":12,"順":12,"黃":12,"圍":12,"報":12,"復":12,"提":12,"揮":12,"換":12,"散":12,"最":12,"景":12,"欽":12,"港":12,"渡":12,"游":12,"湖":12,"絕":12,"絲":12,"越":12,"超":12,"量":12,"雄":12,"智":12,"淳":12,"淼":12,"晶":12,"琪":12,"琴":12,"琳":12,"嵐":12,"楓":12,"傑":12,"凱":12,"翔":12,"菁":12,"萱":12,"棠":12,"棵":12,"棟":12,"棠":12,"椿":12,"焰":12,"琦":12,"珺":11,"琺":12,"瑋":12,"畫":12,"番":12,"登":12,"發":12,"硬":12,"等":12,"絡":12,"統":11,"菱":12,"萁":12,"萊":12,"著":12,"蛙":12,"裁":12,"越":12,"鈞":12,"鈴":12,"鉗":12,"雁":12,"雅":13,"雲":12,"項":12,"黑":12,"傢":12,"傧":12,"傳":13,"傲":12,"博":12,"喋":12,"單":12,"堤":12,"媚":12,"媛":13,"寓":12,"崩":12,"嵎":12,"惠":12,"惡":12,"援":12,"替":12,"最":12,"期":12,"棺":12,"湛":13,"滋":12,"煙":13,"焦":12,
+// 13畫
+"愛":13,"意":13,"感":13,"想":13,"源":13,"節":13,"解":13,"路":13,"載":13,"運":13,"農":13,"道":13,"遠":13,"電":13,"預":13,"義":13,"群":13,"話":13,"試":13,"詩":13,"資":13,"跑":13,"達":13,"雷":13,"鼓":13,"當":13,"圓":13,"新":13,"楊":13,"溫":13,"瑞":13,"瑜":13,"雅":13,"嫣":13,"媛":13,"睡":13,"葉":13,"楠":13,"楷":13,"楨":13,"煜":13,"煒":13,"煥":13,"瑛":13,"瑟":13,"瑤":14,"琿":13,"碩":13,"祿":13,"禎":13,"萬":13,"葳":13,"葶":13,"蒂":13,"蒙":13,"蓁":13,"誠":13,"路":13,"鉦":13,"鉛":13,"鈺":13,"頒":13,"頌":13,"飾":13,"傳":13,"勤":13,"嗣":13,"嘉":14,"塑":13,"塞":13,"塗":13,"填":13,"愉":13,"意":13,"搖":13,"搜":13,"楔":13,"歇":13,"溺":13,"溪":13,"溫":13,"煌":13,"煤":13,"瑕":13,"痰":13,"碌":13,"祺":13,"稚":13,"筵":13,"節":13,"粵":13,"義":13,"葬":13,"蓮":13,"蜂":13,"試":13,
+// 14畫
+"滿":14,"實":14,"福":14,"種":14,"精":14,"綠":14,"臺":14,"說":14,"語":14,"輕":14,"銀":14,"鳳":14,"劉":14,"嘉":14,"夢":14,"寬":14,"漂":14,"漸":14,"碧":14,"端":14,"管":14,"緣":14,"維":14,"遊":14,"魂":14,"誓":14,"慢":14,"賓":14,"瑤":14,"嫦":14,"嬌":15,"嬋":15,"嫵":15,"嫻":16,"瑩":15,"瑾":16,"瓊":16,"銘":14,"銓":14,"銜":14,"銅":14,"鳴":14,"鼻":14,"僑":14,"圖":14,"墊":14,"嫺":16,"察":14,"寡":14,"寬":14,"慣":14,"慰":14,"摘":14,"摩":14,"榕":14,"榮":14,"漁":14,"漣":14,"漾":14,"熊":14,"碣":14,"磁":14,"算":14,"精":14,"綱":14,"聞":14,"蒸":13,"蓬":14,"蓮":13,"褒":14,"誓":14,"賑":14,"輔":14,"遠":13,"鈴":12,"銀":14,
+// 15畫
+"億":15,"儀":15,"增":15,"廣":15,"德":15,"樣":15,"論":15,"請":15,"調":15,"賞":15,"輝":15,"墨":15,"慶":15,"樂":15,"潔":15,"稿":15,"線":15,"編":15,"遷":15,"毅":15,"瑩":15,"嬌":15,"嬋":15,"劇":15,"劍":15,"審":15,"寮":15,"廟":15,"彈":15,"撒":15,"樓":15,"樸":15,"熟":15,"熱":15,"穀":15,"窮":15,"範":15,"緻":15,"線":15,"膚":15,"蓿":15,"蝶":15,"誼":15,"談":15,"踢":15,"輝":15,"鋒":15,"鋤":15,"靠":15,"駐":15,"駕":15,
+// 16畫
+"黎":16,"器":16,"導":16,"燈":16,"興":16,"錢":16,"頭":16,"璐":16,"瑾":16,"瓊":16,"燦":16,"積":16,"穎":16,"聰":16,"臻":16,"錦":16,"嫻":16,"嫺":16,"憲":16,"橙":16,"橡":16,"燁":16,"璟":16,"瓔":16,"諾":16,"諦":16,"錫":16,"錨":16,"頰":16,"駱":16,"鮑":16,"默":16,"霍":16,"霓":16,"靜":16,
+// 17畫
+"還":17,"霞":17,"優":17,"濃":17,"環":17,"聲":17,"謝":17,"鮮":17,"點":17,"龍":17,"應":17,"澤":17,"禪":17,"總":17,"縮":17,"聯":17,"臨":17,"薪":17,"謙":17,"鍵":17,"鎖":17,"鎮":17,"鴿":17,"齋":17,
+// 18畫
+"燿":18,"職":18,"雙":18,"覆":18,"豐":18,"禮":18,"雞":18,"顏":18,"題":18,"鶴":18,"藏":18,"藝":19,"鎰":18,"鎳":18,"鬆":18,"鵝":18,"麴":18,
+// 19畫
+"藝":19,"麗":19,"鵲":19,"懷":19,"曝":19,"瀏":19,"羅":19,"譜":19,"識":19,"關":19,
+// 20畫以上
+"嚴":20,"饒":21,"靈":24,"鑫":24,"鬱":29,"寶":20,"競":20,"躁":20,"釋":20,"黨":20,"護":20,"攤":21,
+// ── 常用姓氏補充 ──
+"王":4,"李":7,"張":11,"劉":14,"陳":11,"楊":13,"黃":12,"趙":14,"吳":7,"周":8,"徐":10,"孫":10,"馬":10,"朱":6,"胡":9,"郭":11,"何":7,"羅":19,"高":10,"林":8,"鄭":15,"梁":11,"謝":17,"宋":7,"唐":10,"許":11,"韓":17,"馮":12,"鄧":15,"曹":11,"彭":12,"曾":12,"蕭":17,"田":5,"董":15,"潘":15,"袁":10,"蔡":17,"蔣":14,"余":7,"杜":7,"葉":13,"程":12,"蘇":22,"魏":18,"呂":7,"丁":2,"范":9,"方":4,"石":5,"姜":9,"戴":18,"賈":13,"廖":14,"江":6,"夏":10,"鄒":14,"錢":16,"汪":8,"嚴":20,"沈":7,"武":8,"邱":7,"彭":12,"呂":7,"蔣":14,"盧":16,"薛":17,"邵":8,"季":8,"侯":9,"任":6,"龔":22,"翁":10,"卓":8,"鄧":15,"陸":11,"白":5,"方":4,"康":11,"簡":18,"莫":11,"歐":15,"柯":9,"藍":18,"喬":12,"魯":15,"闕":20,"莊":10,"鍾":17,"施":9,"孟":8,"涂":10,"穆":16,"尤":4,"傅":12,"賴":17,"湯":12,"顧":21,"錢":16,"鄭":15,"夏":10,"童":12,"顏":18,"戚":11,
+// ── 常用名字補充 ──
+"志":7,"俊":9,"宇":6,"昊":9,"旭":6,"軒":10,"逸":11,"澤":17,"熙":16,"凱":12,"翔":12,"勤":13,"騰":20,"濤":18,"峻":10,"赫":14,"煜":13,"璿":19,"琦":12,"珺":11,"琳":12,"婕":11,"婷":12,"淑":11,"雯":12,"慧":15,"蓉":13,"倩":10,"韻":19,"芳":7,"芸":7,"菁":12,"萱":12,"薇":17,"藍":18,"玲":9,"珍":9,"琪":12,"霖":16,"湘":13,"泓":8,"淳":12,"晶":12,"宜":8,"建":9,"勇":9,"強":12,"忠":8,"誠":13,"義":13,"智":12,"孝":7,"廉":13,"毅":15,"偉":11,"傑":12,"傳":13,"儀":15,"彤":7,"采":8,"彩":11,"嫣":13,"婉":11,"姿":9,"妍":7,"妤":7,"嬌":15,"若":8,"敏":11,"宸":10,"晴":12,"睿":13,"凱":12,"楓":13,"彥":9,"煒":13,"瑛":13,"煌":13,"祐":10,"宬":9,"宏":7,"宥":9,"宣":9,"宛":8,"宙":10,"寅":11,"宜":8,"恆":10,"恒":9,"惟":11,"惠":12,"悅":11,"怡":8,"思":9,"昆":8,"昇":8,"昂":8,"旺":8,"昀":8,"旻":8,"昕":8,"昭":9,"昌":8,"易":8,"昶":9,"晏":10,"晟":10,"晉":10,"暄":13,"映":9,"旖":9,"煦":13,"熠":15,"燊":16,"曦":20,"炫":9,"炯":9,"炳":9,"炤":9,"昱":9,"旺":8,"烊":10,"焱":12,"煊":13,"熙":16,"熹":16,"皓":12,"晧":12,"皎":11,"皙":12,"珵":11,"珮":10,"珂":9,"珀":9,"珩":9,"玫":8,"珊":9,"琰":12,"琬":12,"琺":12,"瑋":12,"琿":13,"璇":17,"璟":16,"璿":19,"瓔":19,"珏":9,"珺":11,"瑯":13,"瑜":13,"瑩":15,"瑤":14,"璐":16,"瑾":16,"瓊":16,"鈺":13,"銘":14,"錦":16,"鑄":22,"鍾":17,"鋒":15,"鎧":17,"鑑":22,"鈞":12,"鎮":18,"鏡":19,"鉅":13,"珍":9,"銓":14,"苑":8,"苓":9,"茜":9,"茵":11,"荷":10,"莉":10,"莎":10,"萍":12,"蕾":18,"菡":12,"菀":12,"蓁":13,"葵":13,"蓮":14,"芊":7,"芋":7,"芍":7,"芝":7,"芒":7,"芙":7,"茉":8,"茅":8,"茹":9,"荊":11,"荔":10,"莓":10,"萱":12,"蔓":14,"薛":17,"薰":19,"藕":19,"蘭":20,"苒":8,"苔":9,"苺":10,"莞":10,"菡":12,"菩":12,"萌":11,"葦":13,"蒨":14,"蓓":13,"蓿":15,"蔣":14,"蔭":15,"薇":17,"藍":18,"葳":13,"葶":13,"蒂":13,"蓬":14,"蕙":16,"茗":9,"菊":11,"菖":11,"莆":11,"荳":13,"蒲":14,"葡":13,"蔚":15,"薑":19,"蘇":22,"芬":7,"芷":7,"芮":7,"苡":8,"苹":9,"茂":8,"茍":9,"茶":12,"荒":10,"茲":10,"莖":11,"菘":12,"著":13,"萃":12,"葺":13,"蒸":13,"蒙":13,"藻":20,"菲":12,"葆":13,"葫":13,"蔗":15,"藩":19,"爵":18,"巍":21,"嶸":18,"岫":8,"崢":11,"嵐":12,"嶺":17,"岩":8,"峰":10,"岡":8,"峽":10,"嵐":12,"崇":11,"嵩":13,"嶂":14,"巒":22,"嶽":17,"嶼":17,"屹":6,"岱":9,"峻":10,"崙":11,"嵋":12,"嶄":15,"崑":11,"崗":11,"巔":24,"岷":8,"峙":9,"岸":8,"岡":8,"嶂":14,"嵐":12,"帆":6,"帛":8,"幀":13,"幟":16,"彭":12,"彬":11,"彰":14,"影":15,"徵":15,"循":12,"微":13,"德":15,
+// ── 洋字補充 ──
+"洋":9,"浩":10,"海":10,"涵":11,"清":11,"渝":12,"湛":13,"溯":13,"澄":16,"濂":17,"冰":6,"霜":17,"霖":16,"霞":17,"雲":12,"霍":16,"霓":16,"露":21,"霰":22,"靖":13,"靛":16,"靚":14,"靜":16,
+// ── 其他常用字 ──
+"佑":7,"佐":7,"侑":8,"信":9,"修":10,"俊":9,"倫":10,"偉":11,"傑":12,"健":11,"偵":11,"備":12,"傑":12,"傑":12,"偉":11,"傾":13,"僑":15,"億":15,"儀":15,"儒":16,"優":17,"儲":17,"償":17,"儷":21,"兒":8,"冠":9,"典":8,"劃":14,"劇":15,"剛":10,"剪":11,"劍":15,"劉":14,"匯":13,"博":12,"博":12,"博":12,"嗣":13,"境":14,"嘉":14,"嫻":16,"嬌":15,"嬋":15,"孟":8,"孫":10,"寅":11,"寶":20,"封":9,"恒":9,"恆":10,"懷":19,"攬":25,"晨":11,"智":12,"朝":12,"樂":15,"橋":16,"歡":21,"涯":10,"洪":9,"濱":18,"燁":16,"牟":6,"珵":11,"璃":15,"璟":16,"瑚":13,"瑞":13,"皓":12,"皙":12,"睿":13,"碩":13,"禮":18,"程":12,"稼":15,"竣":12,"笙":11,"箏":14,"篤":17,"籃":20,"系":7,"純":10,"紋":10,"絢":12,"綾":14,"緯":15,"縉":16,"縫":17,"繁":17,"繡":18,"繞":18,"總":17,"纏":21,"翊":11,"翌":11,"翎":11,"翔":12,"聿":6,"肅":13,"胤":9,"胭":11,"臻":16,"若":8,"蓁":13,"蔓":14,"謙":17,"謹":18,"豫":16,"趙":14,"蹤":18,"身":7,"邦":8,"鄉":13,"鄰":17,"鑑":22,"閩":14,"閱":15,"陶":11,"陽":12,"隸":17,"雍":13,"韋":9,"韶":14,"頌":13,"頗":13,"顯":23,"颯":14,"魄":15,"鬆":18,"鯤":18,"鰻":22,"鱗":23};
+
+
+</script>
+<script>
+
+// ═══════════════════════════════════════════════════════
+// DATA TABLES
+// ═══════════════════════════════════════════════════════
+const ELEM = {1:'木',2:'木',3:'火',4:'火',5:'土',6:'土',7:'金',8:'金',9:'水',0:'水'};
+const ELEM_SOUL = {
+  '木':{思維:'→思路單一、理性沉著、具分析力與自主性',動作:'→做事說話均直接，不輕易改變原定計劃，持續力佳。',個性:'→直率固執，思想單一，喜好分析，理性內斂，重視原則與制度。'},
+  '火':{思維:'→學習力強，反應敏捷，追求效率',動作:'→個性急躁衝動，責任感強，義氣當先。',個性:'→熱情如火，重視朋友，行動迅速，感性衝動，喜新求變。'},
+  '土':{思維:'→保守穩健，思想縝密，分析能力出色',動作:'→按部就班，做事有原則，習慣做把握較高之事。',個性:'→穩重踏實，包容被動，保護性強，外表遲緩內心精明。'},
+  '金':{思維:'→果斷自主，思想不易受外界影響，說服力強',動作:'→行動迅速，不服輸，剛毅果敢，天生帶頭領導特質。',個性:'→剛強自主，好勝不服輸，說服力與領導力兼備，感性重情義。'},
+  '水':{思維:'→聰慧多思，思想容易受到外界左右',動作:'→隨性被動，安逸懶散，持續力較弱，易虎頭蛇尾。',個性:'→柔軟享受，重視外表與美感，隨和聰明，定性稍差。'}
+};
+const STAR_MAP = {
+  1:{name:'權星',desc:'主管理、掌權、帶動他人',type:'隱藏型（內斂）'},
+  2:{name:'相星',desc:'主輔佐、規劃、文書謀略',type:'表現型（主動）'},
+  3:{name:'車星',desc:'主動力、活力、行動力',type:'活躍型（積極）'},
+  4:{name:'口舌星',desc:'主表達、聲譽、亮眼吸睛',type:'承接型（上天賜予）'},
+  5:{name:'庫星',desc:'主儲存、穩守、容納守成',type:'困象型（靠自己）'},
+  6:{name:'驛馬星',desc:'主奔波、毅力、遠行闖蕩',type:'隱藏型（內斂）'},
+  7:{name:'孤星',desc:'主開發、獨立、奮鬥剛毅',type:'表現型（主動）'},
+  8:{name:'事業星',desc:'主成果、利益、效率務實',type:'活躍型（積極）'},
+  9:{name:'五鬼星',desc:'主變化、轉折、破壞重生',type:'承接型（上天賜予）'},
+  0:{name:'文曲星',desc:'主智慧、思想、財富攀升',type:'困象型（靠自己）'}
+};
+const CAI_GE = {
+  1:{you:true,cu:'暗庫',cu_desc:'名曰無庫實有暗庫，謹慎投資勿亂操作，守智慧可積暗財。',you_desc:'偏財格局旺，附加價值與機運財充足，兼職副業多元發財。'},
+  2:{you:false,cu:'福德庫',cu_desc:'天官賜福貴人庫，最忌貪婪無饜，心存善念庫更旺。',you_desc:'福德財氣，和氣生財，老二哲學反而財運暢通，忌懶散。'},
+  3:{you:true,cu:'搶庫',cu_desc:'財來財往庫難留，親友時常拿借，宜置產保險分散理財。',you_desc:'實力財格，愈爭愈旺，能力展現即是競爭力財。'},
+  4:{you:false,cu:'空庫',cu_desc:'付出奉獻財外流，宜置產保值守財，保險有價證券宜持有。',you_desc:'付出奉獻型財，先積善緣，財氣後段才會報到。'},
+  5:{you:true,cu:'四方庫',cu_desc:'四方入庫氣最強，實而不滿虛不空，守成理財方能旺庫。',you_desc:'四方進財氣最盛，最忌心慌無目標，定心志方可聚財。'},
+  6:{you:false,cu:'入庫',cu_desc:'穩紮穩打是正道，只進不出最佳庫，善加理財庫更旺。',you_desc:'入庫型財，只進不出守成財，追隨順位機緣氣最強。'},
+  7:{you:true,cu:'回收庫',cu_desc:'守財不可單等待，主動智取多元化，複利滾動積財富。',you_desc:'回收型財，後繼者收前人果實，追隨順勢財最旺。'},
+  8:{you:false,cu:'辛苦庫',cu_desc:'實力與能力兼備庫，創造時機廣開財源，多元理財充實庫藏。',you_desc:'機運時機財，搶先出擊方有財，創新改革財氣亨通。'},
+  9:{you:true,cu:'變化庫',cu_desc:'多元變化方可入庫，善投資理財豐盈庫藏，謙虛低調補充庫氣。',you_desc:'轉機型財，亂中得機財氣旺，一成不變則財路阻塞。'},
+  0:{you:false,cu:'有庫',cu_desc:'有庫。',you_desc:'需多方努力積累財富。'}
+};
+const CAI_GE_NAME = {1:'富格',2:'權格',3:'豪格',4:'貴格',5:'平賭格'};
+const CAI_FINANCE = {
+  1:'偏財・機運財・投資財，可合夥，重錢財，半機運半實力派',
+  2:'正財・有耕耘才有收穫，愛掌主權，靠自身白手起家，屬實力派',
+  3:'五鬼財・投機財・錢滾錢，具賭性，屬機運派',
+  4:'正財・貴氣清高，組織型收入，公職型人格',
+  5:'賭財・知名度財・偏財，不服輸具賭性，屬投機派',
+  0:''
+};
+const MARKETING_DATA = {
+  '木':{unfamiliar:'容易和其他選項比較，不易直接切入主題，臉上表情冷淡',familiar:'思考分析後慢條斯理購買，小心求證',method:'陪同分析比較，善用表格化資料，耐心追蹤引導，或適時代為作主，想辦法讓對方多開口表達意見',type:'耿直型・冷靜型・執著型客戶'},
+  '火':{unfamiliar:'天生好客，容易相處，製造知己感，感性切入效果最佳',familiar:'重朋友套交情，可直接開口要求購買',method:'聊八卦是非、談重點利潤、套老朋友交情、快速成交；談話不宜過長否則對方易失去興趣',type:'熱情型・坦率型客戶'},
+  '土':{unfamiliar:'不易與陌生人溝通，偏好找熟識的人購買',familiar:'仍需分析思考，小心求證，慢條斯理',method:'表格化資料、長期追蹤、適時推一把，耐心陪同分析，想辦法讓對方多說話',type:'耿直型・冷靜型客戶'},
+  '金':{unfamiliar:'不易取得信任，難以約訪，眼光向上不向下',familiar:'重朋友情誼，套交情可直接購買',method:'遇強則柔，多讓對方說話，尊重態度佳，喜歡被讚美奉承，熟識後套交情直接開口',type:'冷靜型・坦率型・執著型・愛面子型客戶'},
+  '水':{unfamiliar:'客套隨和，沒時間觀念，偶爾容易被感動而衝動購買',familiar:'善變，慢慢考慮，習慣推拖拉',method:'多元溝通管道，聊享樂話題，要求確認時間表，選擇氣氛好的地點洽談，引導式代為作主，留意善變承諾',type:'猶豫型・愛面子型客戶'}
+};
+const MGMT_DATA = {
+  '木':{特點:'思想固執難轉彎，理性直接，喜分析，重制度原則，冷靜內斂。',缺點:'主觀意識過強，若對保險觀念抗拒，增員機率幾近零，需長期耐心說服。',增員:'長期追蹤，展現個人成長突破來影響其思維，讚美提升自信心，精神喊話激勵。',上班:'執行力保守，需多次推促與觀念引導，主動問問題尋找癥結，前三個月宜留在組織身旁改造思維。'},
+  '火':{特點:'熱情義氣，感性有效率，學習快，對外好脾氣對內急躁沒耐性。',缺點:'容易衝動決定，擔心來了適應不良或失去新鮮感而快速離去。',增員:'鼓勵讚美，營造氣氛，誇讚能力，套老朋友交情，利誘豐厚收入，提供新鮮刺激的學習機會。',上班:'學習反應快，要持續保持新鮮感，給予優越感任務，適時讚美，留顏面給他。'},
+  '土':{特點:'穩健踏實，包容被動，保守內歛，凡事求有把握，安全感不足。',缺點:'主觀強，保險觀念若不足，增員機會幾近零，需長期耐心等候。',增員:'耐心等候長期追蹤，展現自我成長突破影響其想法，讚美提升自信。',上班:'執行保守需推促，多次觀念引導，前三個月宜留組織身旁觀念改造。'},
+  '金':{特點:'不服輸好勝，自主果斷，說服力強，感性重朋友，吃軟不吃硬。',缺點:'自尊心強怕丟臉，害怕做不好而裹足不前。',增員:'用軟的套交情，讚美，利用不服輸特質做比較，找個看起來不如他的比較對象加以讚美激將。',上班:'點樣式教育，留足顏面，適時讚美，安排能展現優越感的工作任務。'},
+  '水':{特點:'容易被說服，客套安逸，享受被動，聰明多思，個性抓不住。',缺點:'情緒化隨性答應後反覆，爽約，陌生環境容易緊張臨陣脫逃。',增員:'利誘，強調自由上班美感氣質，常出國遊玩，凸顯優越感。',上班:'行動被動需推促，不可放任，前三個月在身旁訓練，建立陌生開發膽識，善用親和力。'}
+};
+const SELF_DATA = {
+  1:{先天:'時機與創意絕佳，在外地發展更易獲貴人提拔照顧。',個性:'主觀果斷，心思隱密，善謀善計，自信自尊強，創意判斷力出色。',動作:'主動積極，偶有衝動不穩。',處事:'講求實力，能吃苦冒險，敢突破創新，負責任但也易好高騖遠。',優點:'思緒敏銳冷靜，領導力強，善以德服眾，用人以情。',缺點:'情緒化刀子口豆腐心，過於主觀，嫉妒心偏強，易激動傷人際。',事業:'生產・技術・發明創意・教育・幕僚・軍警管理・自由業。'},
+  2:{先天:'時機創意佳，在外地發展更易受貴人青睞。',個性:'理性分析型，自我意識稍強，見機行事，善謀善教，不服輸有創意。',動作:'主動積極，偶有衝動。',處事:'講求實力，勇於冒險創新，負責任，有時好高騖遠。',優點:'思緒敏銳，領導力強，善教化他人。',缺點:'情緒化，過於主觀，嫉妒心偏強。',事業:'生產・技術・學者・專家・教育・顧問・軍警・管理・自由業。'},
+  3:{先天:'代理型機會點，亂中得機，人際關係是一大資產。',個性:'感性熱忱，外向動力強，急性衝動，多意見，忠心耿耿對認可之人。',動作:'主動活力充沛，耐力差，急性子。',處事:'快速服務求利潤，敢冒險具投機性，善於變化與改造。',優點:'護主型服務型，善提意見，屬交易保鑣人格。',缺點:'易複雜化，破壞力強，浮躁缺耐力，易不滿排斥。',事業:'公關・服務・公益・買賣・代理・仲介・貿易・設計・藝術家。'},
+  4:{先天:'代理型機會，亂中得機，人際關係是核心資本。',個性:'熱心愛說話，外向學習力強，感性衝動，多意見，對認可之人忠心。',動作:'主動活力十足，耐力差，急性子。',處事:'快速服務，敢冒險投機，善於變化與結構改造。',優點:'護主服務型，善提意見，屬交易保鑣型人格。',缺點:'易複雜化，破壞力強，浮躁缺耐力，易不滿排斥。',事業:'公關・服務・公益・買賣・代理・仲介・貿易・設計・藝術家。'},
+  5:{先天:'承接守業，合作共贏。',個性:'守成內斂，穩定執著，原則保守，善企劃，外表遲鈍內心精明。',動作:'被動但份內積極，按部就班，持續力強。',處事:'講究條理制度，喜做有把握之事，規劃好再行動。',優點:'隱藏保護力強，善企劃整合，屬策略規劃型人格。',缺點:'不易轉彎，過守成執著，不善多作解釋。',事業:'家族・技術・公職・政治・建築・工程・企劃・整合・公務員・作家・電腦・顧問。'},
+  6:{先天:'承接守業，合作互利。',個性:'驛馬奔波型，遠行毅力強，內斂冷靜，執著守原則，善企劃。',動作:'被動但份內積極，按部就班，持續力強。',處事:'講究條理制度，喜規劃後行動，做有把握的事。',優點:'隱藏保護力強，善企劃整合，屬策略規劃型人格。',缺點:'不易轉彎，過守成固執，不善多解釋。',事業:'家族・技術・公職・建築・工程・企劃・交通・作家・電腦・廣告。'},
+  7:{先天:'長輩緣好，靠提拔晉升，有絕處逢生的奇蹟特質。',個性:'孤星型，獨來獨往，不宜合夥，主觀剛毅果斷，叛逆不信邪，怕軟不怕硬。',動作:'主動積極快速準確，敏銳度高。',處事:'敢突破，要求嚴，講求實力能吃苦，複雜事務簡單化，敬業負責。',優點:'具第六感，冷靜深藏，敢改革，有領導駕馭特質，屬管理型人格。',缺點:'易得意忘形，自大主觀，誇大好高騖遠，剛愎自用。',事業:'軍・政・警・管理・改革・生產・技術・加工・工程・醫療・金融・娛樂業。'},
+  8:{先天:'長輩緣強，靠提拔晉升，有化危為機的特質。',個性:'主觀剛毅，效益導向，不服輸，自主判斷力強，吃軟不吃硬。',動作:'主動積極快速，準確敏銳。',處事:'敢突破，要求嚴，講求實力，敬業負責，把複雜事情簡單化。',優點:'第六感強，冷靜深藏，敢改革，有領導特質，屬管理型人格。',缺點:'易得意忘形，自大，主觀誇大，好高騖遠，剛愎自用。',事業:'軍・政・警・管理・改革・生產・加工・工程・醫療・金融・娛樂。'},
+  9:{先天:'異性助力，合作助力，提拔扶持緣好。',個性:'樂天隨性，不喜束縛，反應快，聰明善變，喜好美感與設計。',動作:'行動緩慢，思多行少，被動短暫衝勁。',處事:'配合型，善結群體力量，保守調解型。',優點:'善輔佐策劃，設計調解多才多藝。',缺點:'怕壓力耳根軟，幻想多，關鍵時刻易逃避，輕浮不專心，虎頭鼠尾。',事業:'幕僚・設計・分析・輔佐・藝術・飲食・合夥・買賣・美化・服務・電腦。'},
+  0:{先天:'異性助力，合作緣強，提拔扶持運好。',個性:'分析規劃型，樂天隨和，聰明多思，喜好美感設計，輔佐功能強。',動作:'緩慢被動，思多行少，短暫衝勁。',處事:'配合合群，善結合群力，調解型。',優點:'善輔佐規劃，設計調解，多學型。',缺點:'怕壓力軟耳，幻想嚴重，關鍵時易逃避，輕浮不專心。',事業:'幕僚・設計・分析・輔佐・藝術・飲食・合夥・美化・服務・電腦。'}
+};
+const YUN_ORDER = ['冠帶','臨官','帝旺','衰','病','死','絕','胎','養','長生'];
+const YUN_PCT = {胎:0,養:70,長生:80,冠帶:90,臨官:90,帝旺:100,衰:70,病:50,死:30,絕:10};
+const YUN_GOOD = {胎:false,養:true,長生:true,冠帶:true,臨官:true,帝旺:true,衰:false,病:false,死:false,絕:false};
+const YUN_KEY = {
+  胎:'安心靜待3分／勿離根本2分／少作幻想1分／等待時機2分／廣結善緣2分',
+  養:'吸收學習3分／接受安排2分／補充人脈2分／按部就班2分／勿存貪念1分',
+  長生:'早起積極2分／把握天時2分／善用地利2分／廣求人和2分／積極努力2分',
+  冠帶:'修身養性2分／心存正念2分／積極表現2分／勿太自我2分／切忌投機2分',
+  臨官:'收斂野心3分／充分表現2分／控制脾氣2分／杜絕衝動2分／深藏不露1分',
+  帝旺:'化解肝火2分／穩定情緒2分／謙卑有禮2分／尊重上司1分／理性判斷1分／多包容1分／用心經營1分',
+  衰:'主動積極2分／排除倦怠2分／意志堅定2分／耐心等待2分／絕不放棄2分',
+  病:'安定心神3分／不惶恐1分／不怨恨1分／不急躁1分／不變節1分／不投機1分／三思而後行2分',
+  死:'反省檢討2分／記取教訓2分／不悲觀1分／不失望1分／再接再厲2分／當機立斷2分',
+  絕:'清除舊包袱2分／結束危機2分／暫時休整2分／鍛鍊身心2分／重新佈局2分'
+};
+const YUN_TABOO = {胎:'憂鬱浮動／胡亂改變現狀',養:'無上進心／不切實際／不主動求助',長生:'原地不動／後知後覺／不借助他人力量',冠帶:'自以為是／目中無人',臨官:'自我意識過高／或毫無志向抱負',帝旺:'傲慢自大／自滿自我為中心',衰:'懶散被動消極',病:'判斷失誤／自我放棄／急躁或輕易改變',死:'冒進投機／大意粗心不謹慎',絕:'悲觀茫然／自我放棄'};
+const YUN_OPS = {
+  胎:{現象:'出現新變化與新事務，貴人亦可能現身。工作面易想換行業，思緒多方考量，好似機會眾多但多為幻覺，投資理財需格外謹慎。',方針:'全力開發新客戶，此段動能最弱，需借力使力，靜待最佳時機出手。'},
+  養:{現象:'吸收能力最旺，不自覺貴人援助最多（父母、上司、親屬給予金錢物質支持）。創業者若養分不足（資金不足）此時成功難度較高。',方針:'積極開發新客戶廣結善緣，動能漸增強，機會重現，全力衝刺的起點之年。'},
+  長生:{現象:'上半年稍不穩定，下半年漸趨穩固。新機會點湧現，運勢動能開始顯現，貴人旺（無形知識智慧型）。',方針:'開發新客戶並促進轉介紹，動能大增，機會大好，突破格局展現真實力之年。'},
+  冠帶:{現象:'邊做邊學習直至成熟，表現慾與知名度同步提升。',方針:'新舊客戶齊頭並進，動能意識增強，展現長才，知名度經營有突破晉升之機。'},
+  臨官:{現象:'所學開始發揮，表現慾強，善於管理領導他人，自我力量全面展現。',方針:'新舊客戶並進，直線擴大組織，自主意識最強，表現個人特色最易獲認同。'},
+  帝旺:{現象:'最容易自以為是，忠言逆耳聽不進去。下半年易招小人，愛聽奉承，獨裁傾向明顯。',方針:'橫向擴充組織，精神力量最旺，主觀最強，展現實力氣勢贏人創績效，強運須求人和。'},
+  衰:{現象:'不自覺開始下滑，好運仍在但力道不足，偶感力有未逮，尚有動力前行。',方針:'秋收回收運，主攻舊客戶與原有資源的回收變現，排除倦怠積極收割暗財。'},
+  病:{現象:'感覺力量明顯不足，容易蠢蠢欲動亂表現，不深思熟慮，易亂投資病急亂投醫。',方針:'回收運最強段，集中火力經營舊有客戶與過去累積的人脈資源。'},
+  死:{現象:'倦怠感最重，上半年仍有迴光返照餘力，下半年亦有一定回收（白包入帳）。',方針:'知名度運最佳，開發新客戶轉介紹與陌生開拓均易被認同成交，同時易升官進職。'},
+  絕:{現象:'能量幾乎耗盡，最無力氣，尚有剩餘殘值可回收。如梵谷的畫，身後才得大名。',方針:'動能最弱最無力之段，全靠借力使力，以毅力信念意念撐過此關。'}
+};
+
+</script>
+<script>
+
+// ═══════════════════════════════════════════════════════
+// CORE ENGINE
+// ═══════════════════════════════════════════════════════
+let currentAnalysis = null;
+let selectedGoals = [];
+
+function getStroke(ch) { return STROKE_DB[ch] || null; }
+
+function calcStrokes(name) {
+  return [...name].map(ch => ({ char: ch, stroke: getStroke(ch) }));
+}
+
+function calcMingGong(strokes) {
+  let t = 0;
+  for (const s of strokes) if (s.stroke) t += s.stroke;
+  return t % 10;
+}
+
+function calcXinZhu(strokes) {
+  if (!strokes[0] || !strokes[0].stroke) return null;
+  return strokes[0].stroke % 10;
+}
+
+function calcHunZhu(strokes) { return calcMingGong(strokes); }
+
+function calcAge(dobStr) {
+  // Support both 6-digit (民國YY) and 7-digit (民國YYY) ROC dates
+  let yy, mm, dd;
+  if (dobStr.length === 7) {
+    yy = parseInt(dobStr.substring(0,3));
+    mm = parseInt(dobStr.substring(3,5));
+    dd = parseInt(dobStr.substring(5,7));
+  } else {
+    yy = parseInt(dobStr.substring(0,2));
+    mm = parseInt(dobStr.substring(2,4));
+    dd = parseInt(dobStr.substring(4,6));
+  }
+  const adYear = yy + 1911;
+  const today = new Date();
+  // 虛歲：出生即算一歲，每過一個西曆年加一歲
+  let age = today.getFullYear() - adYear + 1;
+  return { yy, mm, dd, adYear, age };
+}
+
+function calcCurrentYun(dobInfo) {
+  const age = dobInfo.age;
+  const yunIdx = age % 10;
+  return YUN_ORDER[yunIdx % 10];
+}
+
+function analyze() {
+  const name = document.getElementById('nameInput').value.trim();
+  const dob = document.getElementById('dobInput').value.trim();
+  const gender = document.getElementById('genderInput').value;
+  const err = document.getElementById('errMsg');
+  err.textContent = '';
+
+  if (!name) { err.textContent = '請輸入姓名'; return; }
+  if (!dob || (dob.length !== 6 && dob.length !== 7)) { err.textContent = '請輸入民國六位（如661022）或七位（如1140404）'; return; }
+
+  const strokes = calcStrokes(name);
+  const missing = strokes.filter(s => s.stroke === null).map(s => s.char);
+  if (missing.length) { err.textContent = `找不到筆劃資料：${missing.join('、')}`; return; }
+
+  const dobInfo = calcAge(dob);
+  const mingGong = calcMingGong(strokes);
+  const xinZhu = calcXinZhu(strokes);
+  const hunZhu = calcHunZhu(strokes);
+  let totalStrokes = 0;
+  for (const s of strokes) totalStrokes += s.stroke;
+  const caiGeIdx = totalStrokes % 10;
+
+  const xinElement = ELEM[xinZhu];
+  const hunElement = ELEM[hunZhu];
+  const caiGe = CAI_GE[caiGeIdx] || CAI_GE[0];
+  const caiGeName = CAI_GE_NAME[caiGeIdx] || '';
+  const currentYun = calcCurrentYun(dobInfo);
+  const yunPct = YUN_PCT[currentYun] || 0;
+  const isGoodYun = YUN_GOOD[currentYun];
+
+  currentAnalysis = { name, dob, dobInfo, strokes, totalStrokes, mingGong, xinZhu, hunZhu, xinElement, hunElement, caiGeIdx, caiGe, caiGeName, currentYun, yunPct, isGoodYun, gender };
+
+  renderResults();
+  document.getElementById('resultArea').classList.add('visible');
+  setTimeout(() => document.getElementById('resultArea').scrollIntoView({ behavior:'smooth', block:'start' }), 50);
+}
+
+function renderResults() {
+  const d = currentAnalysis;
+  renderNameTab(d);
+  renderYunTab(d);
+  renderForecastTab(d);
+  renderMktTab(d);
+  renderMgmtTab(d);
+  renderSelfTab(d);
+}
+
+function renderNameTab(d) {
+  document.getElementById('nameStats').innerHTML = `
+    <div class="sbox"><div class="sl">姓名</div><div class="sv" style="font-size:24px;letter-spacing:3px;">${d.name}</div></div>
+    <div class="sbox"><div class="sl">總筆劃</div><div class="sv">${d.totalStrokes}</div><div class="ss">${d.strokes.map(s=>s.stroke).join(' + ')}</div></div>
+    <div class="sbox"><div class="sl">命宮數</div><div class="sv">${d.mingGong}</div><div class="ss">${STAR_MAP[d.mingGong]?.name||''}</div></div>
+    <div class="sbox"><div class="sl">心屬（主）</div><div class="sv">${d.xinElement}</div><div class="ss">六成能量</div></div>
+    <div class="sbox"><div class="sl">魂屬（輔）</div><div class="sv">${d.hunElement}</div><div class="ss">四成能量</div></div>
+    <div class="sbox"><div class="sl">年齡（虛歲）</div><div class="sv">${d.dobInfo.age}</div><div class="ss">${'民國'+(d.dob.length===7?d.dob.substring(0,3):d.dob.substring(0,2))+'年生'}</div></div>
+  `;
+
+  document.getElementById('palaceBadge').textContent = `${d.mingGong}宮`;
+  const loShu = [4,9,2, 3,5,7, 8,1,6];
+  document.getElementById('palaceGrid').innerHTML = loShu.map(n => {
+    const s = STAR_MAP[n] || {};
+    return `<div class="pcell ${n===d.mingGong?'hl':''}"><div class="pn">${n}</div><div class="pname">${s.name||''}</div><div class="ptype">${(s.type||'').split('（')[0]}</div></div>`;
+  }).join('');
+
+  const star = STAR_MAP[d.mingGong] || {};
+  document.getElementById('mingGeInfo').innerHTML = [
+    ['命宮數',d.mingGong],
+    ['星曜名稱',`${star.name||''} — ${star.desc||''}`],
+    ['命格類型',star.type||''],
+    ['心屬五行',`${d.xinElement}（心屬${d.xinZhu}宮）${ELEM_SOUL[d.xinElement]?.思維||''}`],
+    ['魂屬五行',`${d.hunElement}（魂屬${d.hunZhu}宮）${ELEM_SOUL[d.hunElement]?.思維||''}`],
+    ['各字筆劃',d.strokes.map(s=>`${s.char}＝${s.stroke}畫`).join('　')],
+  ].map(([k,v]) => `<div class="irow"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
+
+  const cg = d.caiGe;
+  document.getElementById('caiGeInfo').innerHTML = [
+    ['財格',`${d.caiGeName||''} — ${cg.you?'有財格':'無財格'}`],
+    ['財格特質',cg.you_desc||''],
+    ['財運類型',CAI_FINANCE[d.caiGeIdx]||''],
+    ['庫格',cg.cu||''],
+    ['庫格說明',cg.cu_desc||''],
+  ].map(([k,v]) => `<div class="irow"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
+}
+
+function renderYunTab(d) {
+  document.getElementById('yunBadge').textContent = d.currentYun;
+  const keys = (YUN_KEY[d.currentYun]||'').split('／').map(p=>`<span class="pill">${p}</span>`).join('');
+  document.getElementById('yunMain').innerHTML = `
+    <div style="margin-bottom:12px;">
+      <div style="font-size:11px;color:var(--warm);margin-bottom:6px;">能量指數</div>
+      <div class="yun-meter">
+        <div class="yun-track"><div class="yun-fill" style="width:${d.yunPct}%"></div></div>
+        <div class="yun-pct">${d.yunPct}%</div>
+      </div>
+    </div>
+    <div class="igrid">
+      <div class="irow"><div class="k">當前運程</div><div class="v"><strong style="color:var(--gold)">${d.currentYun}</strong> — ${d.isGoodYun?'旺運時期':'弱運時期'}</div></div>
+      <div class="irow"><div class="k">此段現象</div><div class="v">${YUN_OPS[d.currentYun]?.現象||''}</div></div>
+      <div class="irow"><div class="k">經營方針</div><div class="v">${YUN_OPS[d.currentYun]?.方針||''}</div></div>
+      <div class="irow"><div class="k">關鍵行動</div><div class="v">${keys}</div></div>
+      <div class="irow"><div class="k">最忌諱</div><div class="v" style="color:var(--red)">${YUN_TABOO[d.currentYun]||''}</div></div>
+    </div>`;
+
+  document.getElementById('fortuneRing').innerHTML = YUN_ORDER.map(yun =>
+    `<div class="fnode ${YUN_GOOD[yun]?'good':'bad'} ${yun===d.currentYun?'cur':''}">${yun}</div>`
+  ).join('');
+
+  document.getElementById('gaiyunContent').innerHTML = `
+    <div class="igrid">
+      <div class="irow"><div class="k">轉運方法</div><div class="v">${YUN_KEY[d.currentYun]||''}</div></div>
+      <div class="irow"><div class="k">禁忌事項</div><div class="v" style="color:var(--red)">${YUN_TABOO[d.currentYun]||''}</div></div>
+    </div>`;
+}
+
+function renderMktTab(d) {
+  function mktHTML(data, el) {
+    if (!data) return '';
+    return `<div class="tip">五行屬<strong>${el}</strong></div><div class="igrid">
+      <div class="irow"><div class="k">初次接觸</div><div class="v">${data.unfamiliar||''}</div></div>
+      <div class="irow"><div class="k">熟識之後</div><div class="v">${data.familiar||''}</div></div>
+      <div class="irow"><div class="k">溝通對策</div><div class="v">${data.method||''}</div></div>
+      <div class="irow"><div class="k">客戶類型</div><div class="v">${data.type||''}</div></div>
+    </div>`;
+  }
+  document.getElementById('mktMain').innerHTML = mktHTML(MARKETING_DATA[d.xinElement], d.xinElement);
+  document.getElementById('mktSub').innerHTML = mktHTML(MARKETING_DATA[d.hunElement], d.hunElement);
+  document.getElementById('mktMoney').innerHTML = `<div class="igrid">
+    <div class="irow"><div class="k">財格</div><div class="v">${d.caiGeName||''} — ${d.caiGe.you?'有財格':'無財格'}</div></div>
+    <div class="irow"><div class="k">財格特質</div><div class="v">${d.caiGe.you_desc||''}</div></div>
+  </div>`;
+}
+
+function renderMgmtTab(d) {
+  function mgmtHTML(data, el) {
+    if (!data) return '';
+    return `<div class="tip">五行屬<strong>${el}</strong></div><div class="igrid">
+      <div class="irow"><div class="k">人格特點</div><div class="v">${data.特點||''}</div></div>
+      <div class="irow"><div class="k">主要缺點</div><div class="v">${data.缺點||''}</div></div>
+      <div class="irow"><div class="k">招攬方式</div><div class="v">${data.增員||''}</div></div>
+      <div class="irow"><div class="k">入職後培育</div><div class="v">${data.上班||''}</div></div>
+    </div>`;
+  }
+  document.getElementById('mgmtMain').innerHTML = mgmtHTML(MGMT_DATA[d.xinElement], d.xinElement);
+  document.getElementById('mgmtSub').innerHTML = mgmtHTML(MGMT_DATA[d.hunElement], d.hunElement);
+  document.getElementById('mgmtRecruit').innerHTML = `<div class="igrid">
+    <div class="irow"><div class="k">當前運勢</div><div class="v">${d.currentYun} — ${d.isGoodYun?'強運期（主觀強，較難招攬）':'弱運期（意識鬆，較易說服）'}</div></div>
+    <div class="irow"><div class="k">招攬建議</div><div class="v">${d.isGoodYun?'此時動能強，主觀意識高，宜善用其人格特質與個性切入，以讚美及引導「不服輸」氛圍效果最佳。':'此時動能弱，意識鬆懈，較容易被說服。採推、誘、利並用方法均見效。'}</div></div>
+  </div>`;
+}
+
+function renderSelfTab(d) {
+  function selfHTML(data, el, num) {
+    if (!data) return '';
+    return `<div class="tip">五行屬<strong>${el}</strong>（${num}宮）</div><div class="igrid">
+      <div class="irow"><div class="k">先天吉運</div><div class="v">${data.先天||''}</div></div>
+      <div class="irow"><div class="k">個性傾向</div><div class="v">${data.個性||''}</div></div>
+      <div class="irow"><div class="k">行動風格</div><div class="v">${data.動作||''}</div></div>
+      <div class="irow"><div class="k">處事方法</div><div class="v">${data.處事||''}</div></div>
+      <div class="irow"><div class="k">人格優點</div><div class="v">${data.優點||''}</div></div>
+      <div class="irow"><div class="k">人格缺點</div><div class="v">${data.缺點||''}</div></div>
+      <div class="irow"><div class="k">適合事業</div><div class="v">${data.事業||''}</div></div>
+    </div>`;
+  }
+  document.getElementById('selfMain').innerHTML = selfHTML(SELF_DATA[d.xinZhu] || SELF_DATA[1], d.xinElement, d.xinZhu);
+  document.getElementById('selfSub').innerHTML = selfHTML(SELF_DATA[d.hunZhu] || SELF_DATA[1], d.hunElement, d.hunZhu);
+
+  const ops = YUN_OPS[d.currentYun] || {};
+  document.getElementById('selfOps').innerHTML = `<div class="igrid">
+    <div class="irow"><div class="k">當前運程</div><div class="v">${d.currentYun}</div></div>
+    <div class="irow"><div class="k">此段現象</div><div class="v">${ops.現象||''}</div></div>
+    <div class="irow"><div class="k">經營方針</div><div class="v">${ops.方針||''}</div></div>
+    <div class="irow"><div class="k">最忌諱</div><div class="v" style="color:var(--red)">${YUN_TABOO[d.currentYun]||''}</div></div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// FORECAST RENDER (10-year band chart)
+// ═══════════════════════════════════════════════════════
+function renderForecastTab(d) {
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const barsEl = document.getElementById('forecastBars');
+  const detailEl = document.getElementById('forecastDetail');
+  
+  const bars = [];
+  const details = [];
+  
+  for (let i = 0; i < 10; i++) {
+    const yr = currentYear + i;
+    // 虛歲：出生年即1歲，每過一個西曆年+1
+    const ageAtYear = yr - d.dobInfo.adYear + 1;
+    const yunIdx = ageAtYear % 10;
+    const yunName = YUN_ORDER[((yunIdx % 10) + 10) % 10];
+    const pct = YUN_PCT[yunName] || 50;
+    const isGood = YUN_GOOD[yunName];
+    const isCurrent = i === 0;
+    bars.push({yr, yunName, pct, isGood, isCurrent});
+    details.push({yr, yunName, pct, isGood, ageAtYear});
+  }
+  
+  const maxPct = 100;
+  const chartH = 100; // px
+  
+  barsEl.innerHTML = bars.map(function(b) {
+    var barH = Math.max(8, (b.pct/maxPct)*chartH);
+    var barClass = 'fc-bar ' + (b.isGood ? 'good-bar' : 'bad-bar');
+    var barStyle = 'height:' + barH + 'px;' + (b.isCurrent ? 'box-shadow:0 0 0 2px var(--gold);opacity:1;' : 'opacity:0.8;');
+    var pctClass = 'fc-bar-pct ' + (b.isGood ? 'good-pct' : 'bad-pct');
+    return '<div class="fc-bar-wrap">' +
+      '<div class="' + barClass + '" style="' + barStyle + '" title="' + b.yunName + ' ' + b.pct + '%">' +
+      '<span class="' + pctClass + '">' + b.pct + '%</span></div>' +
+      '<div class="fc-year">' + b.yr + (b.isCurrent ? '★' : '') + '</div>' +
+      '<div class="fc-yun">' + b.yunName + '</div>' +
+      '</div>';
+  }).join('');
+
+  detailEl.innerHTML = `<div class="igrid">` + details.map(b => 
+    `<div class="irow">
+      <div class="k" style="${b.isCurrent?'color:var(--gold);font-weight:700;':''}">${b.yr}年（${b.ageAtYear}歲）</div>
+      <div class="v">
+        <span style="color:${b.isGood?'var(--green)':'var(--red)'};font-weight:600;">${b.yunName}</span>
+        　能量 ${b.pct}%　${b.isGood ? '▲旺運時期' : '▼弱運時期'}　${ ((YUN_OPS[b.yunName] && YUN_OPS[b.yunName]['方針']) || '').substring(0,25) }…
+      </div>
+    </div>`
+  ).join('') + `</div>`;
+}
+
+// renderResults already updated above
+</script>
+<script>
+
+// ═══════════════════════════════════════════════════════
+// NAMING ENGINE
+// ═══════════════════════════════════════════════════════
+
+const NAME_POOL = {
+  m: {
+    '木': ['志','彥','宇','仁','文','彤','昊','旭','軒','逸','澤','凱','博','翔','勤','峻','楓','赫','晨','茂','林','松','榮','柏','楷','棠','桐','梓','樺','梁','樟','森','植','杉','棟','楠','椿','榛','樸','桂','樂','材','柱','極','棋','棍','楝','槿'],
+    '火': ['炫','煜','曜','熙','煒','炳','炎','煥','昱','曦','炯','燁','曙','旻','晟','晴','昂','旺','燦','明','亮','暉','煌','炤','熾','晗','炙','熒','焱','烽','燊','煦','熠','炅','煸','燿','晷','旼','昀','旖','晁','晞','暐','曛','炆','煦','熳','炤','炘'],
+    '土': ['堅','穩','誠','信','恒','靖','安','定','康','泰','崇','峰','嵐','岳','崑','嶺','崢','宸','宏','宜','宥','威','寬','裕','富','容','宣','寅','宗','岱','峙','嵩','嶂','崙','巒','峭','岷','崗','嵋','巍','崴','磊','嶸','嵐','崎','峿','岐','峰','崢'],
+    '金': ['銘','鑫','鋒','鍇','鑄','鍾','鏞','鋼','剛','銀','錦','鎧','鑑','鈞','鎮','鏡','鉅','銓','鈺','鏵','勇','強','毅','勁','武','猛','健','鍵','鎰','錨','鑲','銜','鑰','鏗','鏘','鐸','鐘','鑠','鎬','鏤','鏢','鏨','鐫','鐵','鑭','鑢','鍍','鋇'],
+    '水': ['澄','淳','清','溯','浩','涵','渝','湛','泓','洋','澤','霖','湘','瀚','淼','漣','澹','瀾','潤','滌','源','淵','澮','泰','洪','江','泉','河','洛','漢','灃','滕','漱','溶','澱','濂','瀏','漪','瀧','灝','濬','濡','潮','滬','漳','灞','瀨','澧','溥','漕']
+  },
+  f: {
+    '木': ['芳','芸','菁','萱','蔓','薇','蕾','苑','茹','茉','若','菲','葶','芙','蓉','卉','芊','芝','茜','蘭','葳','菀','苓','荷','莉','莎','茵','芹','菡','蘋','苺','茗','荻','葉','萃','蒨','蓓','菩','葦','蔥','蕙','芬','芷','芮','苡','蓊','蔚','蓬','蒂','蕊'],
+    '火': ['晴','曦','晗','昱','旻','晨','炫','煒','煜','燦','煥','炎','暉','曙','昭','暄','昕','映','晶','旺','炯','熙','照','昇','昀','旖','晟','昵','旼','晞','昶','晁','旭','暐','曛','炆','熒','燁','旻','曜','熠','昊','暖','曄','旖','晷','熙','旒','曒'],
+    '土': ['安','宜','怡','容','雅','姿','妍','婷','媛','嬋','婉','嫣','姸','娜','嫦','媚','婧','嬌','娟','嬅','如','若','悅','慧','淑','思','靜','貞','賢','婕','婭','姮','嫚','婧','妙','嫵','娉','姣','嬈','嬙','妮','娣','姝','嫣','妤','妩','嬥','嫺','嬛'],
+    '金': ['玲','珍','琪','瑤','鈺','銀','琳','璐','瑾','瓊','珺','琦','瑛','珊','琰','玫','珮','琬','璇','瑞','璟','琺','瑋','琿','珩','瓔','珏','玥','珵','璉','瑰','玨','琉','瓏','璘','瑮','璦','琚','瑚','珲','琤','珞','瑭','璎','琅','珑','瑕','璃','珠'],
+    '水': ['涵','清','淳','湘','霖','潔','汝','汐','泠','涓','洳','浣','淑','沁','泳','泓','澄','漣','澹','潤','洋','海','淵','汶','沂','泫','泯','瀅','溱','溫','淇','漪','渝','漩','溟','湄','渚','沚','汀','湉','瑩','渺','浸','湲','溽','漫','淏','濾','湟']
+  }
+};
+
+// 吉祥字庫（第二字與第三字專用）—分性別，可點選加入
+const LUCKY_POOL = {
+  m2: ['瑞','祥','吉','慶','福','壽','豐','盛','昌','旺','泰','安','康','寧','貴','顯','茂','興','隆','榮','達','成','威','雄','英','傑','俊','銘','宏','哲'],
+  m3: ['德','義','仁','誠','信','忠','孝','廉','謙','勇','智','毅','恆','正','善','博','廣','遠','立','淵','純','厚','清','明','直','守','弘','守','澄','潤'],
+  f2: ['蓮','菊','梅','蘭','蕙','芬','慧','雅','婕','晴','琪','靜','淑','秀','柔','媛','嫻','悅','心','怡','欣','舒','好','美','姿','妍','婷','麗','瑤','寧'],
+  f3: ['如','若','之','兮','云','以','思','芊','芝','韻','音','詩','書','華','芸','香','瑩','純','素','貞','靜','雅','賢','柔','善','惠','德','蓉','慈','芳']
+};
+
+// 評分函數
+function scoreCandidate(surname, nameChars, gender, dobDays) {
+  const fullName = surname + nameChars;
+  const strokes = calcStrokes(fullName);
+  if (strokes.some(s => s.stroke === null)) return null;
+
+  let totalStrokes = 0;
+  for (const s of strokes) totalStrokes += s.stroke;
+
+  const mingGong = totalStrokes % 10;
+  const xinZhu = strokes[0].stroke % 10;
+  const hunZhu = mingGong;
+  const caiGeIdx = totalStrokes % 10;
+  const caiGe = CAI_GE[caiGeIdx] || CAI_GE[0];
+  const xinElem = ELEM[xinZhu];
+  const hunElem = ELEM[hunZhu];
+
+  let score = 0;
+  const tags = [];
+
+  // 命宮評分 (最高35分)
+  const goodPalace = [1,2,3,4,6,7,8];
+  if (goodPalace.includes(mingGong)) { score += 20; tags.push({t:'命宮佳', g:true}); }
+  else if (mingGong === 5) { score -= 10; tags.push({t:'5宮困象', g:false}); }
+
+  // 星曜加分
+  if ([1,2,8].includes(mingGong)) { score += 8; tags.push({t:STAR_MAP[mingGong]?.name, g:true}); }
+  else if ([3,6].includes(mingGong)) { score += 5; }
+
+  // 財格評分 (最高20分)
+  if (caiGe.you) { score += 15; tags.push({t:'有財格', g:true}); }
+  else { tags.push({t:'無財格', g:false}); }
+
+  // 五行相生關係 (最高20分)
+  const sheng = {'木':'火','火':'土','土':'金','金':'水','水':'木'};
+  const ke = {'木':'土','土':'水','水':'火','火':'金','金':'木'};
+  if (sheng[xinElem] === hunElem || sheng[hunElem] === xinElem) {
+    score += 20; tags.push({t:'五行相生', g:true});
+  } else if (ke[xinElem] === hunElem || ke[hunElem] === xinElem) {
+    score -= 8; tags.push({t:'五行相剋', g:false});
+  } else {
+    score += 8; // 比和
+    tags.push({t:'五行比和', g:true});
+  }
+
+  // 筆劃平衡分 (最高15分)
+  const individualStrokes = strokes.map(s => s.stroke);
+  const max = Math.max(...individualStrokes), min = Math.min(...individualStrokes);
+  const diff = max - min;
+  if (diff <= 3) { score += 15; tags.push({t:'筆劃均衡', g:true}); }
+  else if (diff <= 6) { score += 8; }
+  else { tags.push({t:'筆劃差距大', g:false}); }
+
+  // 期望特質加分
+  if (selectedGoals.includes('財運亨通') && caiGe.you) score += 5;
+  if (selectedGoals.includes('事業有成') && [1,7,8].includes(mingGong)) score += 5;
+  if (selectedGoals.includes('貴人相助') && [2,4,9].includes(mingGong)) score += 5;
+  if (selectedGoals.includes('健康平安') && [3,6].includes(mingGong)) score += 5;
+  if (selectedGoals.includes('智慧聰穎') && ['水','木'].includes(xinElem)) score += 5;
+  if (selectedGoals.includes('人緣廣闊') && ['火','金'].includes(xinElem)) score += 5;
+
+  return {
+    fullName, nameChars, totalStrokes, mingGong, xinZhu, hunZhu,
+    xinElem, hunElem, caiGe, caiGeName: CAI_GE_NAME[caiGeIdx]||'',
+    caiGeIdx, strokes, score: Math.max(0, Math.min(100, score)),
+    tags
+  };
+}
+
+// generateNames replaced by enhanced version below
+
+function showCandDetail(idx) {
+  const c = window._nameCandidates[idx];
+  if (!c) return;
+  const star = STAR_MAP[c.mingGong] || {};
+  const sheng = {'木':'火','火':'土','土':'金','金':'水','水':'木'};
+  const elemRel = sheng[c.xinElem] === c.hunElem ? '心屬生魂屬，能量相生加成' :
+                  sheng[c.hunElem] === c.xinElem ? '魂屬生心屬，輔助有力' : '五行比和，均衡穩固';
+
+  const detailDiv = document.getElementById('candDetail');
+  detailDiv.style.display = 'block';
+  detailDiv.innerHTML = `
+    <div class="cand-detail">
+      <div class="cand-detail-name">${c.fullName}</div>
+      <div class="stats-row" style="margin-bottom:16px;">
+        <div class="sbox"><div class="sl">綜合評分</div><div class="sv" style="color:${c.score>=70?'var(--green)':'var(--gold)'};">${c.score}</div><div class="ss">滿分100</div></div>
+        <div class="sbox"><div class="sl">總筆劃</div><div class="sv">${c.totalStrokes}</div><div class="ss">${c.strokes.map(s=>s.char+'＝'+s.stroke).join(' · ')}</div></div>
+        <div class="sbox"><div class="sl">命宮</div><div class="sv">${c.mingGong}</div><div class="ss">${star.name||''}</div></div>
+        <div class="sbox"><div class="sl">心屬</div><div class="sv">${c.xinElem}</div><div class="ss">六成能量</div></div>
+        <div class="sbox"><div class="sl">魂屬</div><div class="sv">${c.hunElem}</div><div class="ss">四成能量</div></div>
+      </div>
+      <div class="two-col">
+        <div class="acard">
+          <h3>命格分析</h3>
+          <div class="igrid">
+            <div class="irow"><div class="k">命宮星曜</div><div class="v">${star.name||''} — ${star.desc||''}</div></div>
+            <div class="irow"><div class="k">命格類型</div><div class="v">${star.type||''}</div></div>
+            <div class="irow"><div class="k">五行關係</div><div class="v">${elemRel}</div></div>
+            <div class="irow"><div class="k">財格</div><div class="v">${c.caiGeName||''} — ${c.caiGe.you?'有財格':'無財格'}</div></div>
+            <div class="irow"><div class="k">財格特質</div><div class="v">${c.caiGe.you_desc||''}</div></div>
+          </div>
+        </div>
+        <div class="acard">
+          <h3>個性預測</h3>
+          <div class="igrid">
+            <div class="irow"><div class="k">心屬（${c.xinElem}）</div><div class="v">${ELEM_SOUL[c.xinElem]?.個性||''}</div></div>
+            <div class="irow"><div class="k">魂屬（${c.hunElem}）</div><div class="v">${ELEM_SOUL[c.hunElem]?.個性||''}</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="acard">
+        <h3>未來潛力與適合事業</h3>
+        <div class="igrid">
+          <div class="irow"><div class="k">先天優勢</div><div class="v">${(SELF_DATA[c.xinZhu]||SELF_DATA[1])?.先天||''}</div></div>
+          <div class="irow"><div class="k">人格優點</div><div class="v">${(SELF_DATA[c.xinZhu]||SELF_DATA[1])?.優點||''}</div></div>
+          <div class="irow"><div class="k">適合事業</div><div class="v">${(SELF_DATA[c.xinZhu]||SELF_DATA[1])?.事業||''}</div></div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:16px;">
+        <button class="btn btn-outline" onclick="document.getElementById('candDetail').style.display='none'">關閉詳細資料</button>
+      </div>
+    </div>`;
+  detailDiv.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function toggleGoal(el, goal) {
+  el.classList.toggle('selected');
+  if (el.classList.contains('selected')) {
+    if (!selectedGoals.includes(goal)) selectedGoals.push(goal);
+  } else {
+    selectedGoals = selectedGoals.filter(g => g !== goal);
+  }
+}
+
+function clearNaming() {
+  document.getElementById('nSurname').value = '';
+  document.getElementById('nDob').value = '';
+  document.getElementById('nErrMsg').textContent = '';
+  document.getElementById('namingResult').style.display = 'none';
+  document.querySelectorAll('.goal-chip').forEach(c => c.classList.remove('selected'));
+  selectedGoals = [];
+  pinnedChars = [];
+  renderPinnedChars();
+  renderLuckyChars();
+}
+
+// ── generateNames 改進版：支援吉祥字優先 ──
+
+function generateNames() {
+  const surname = document.getElementById('nSurname').value.trim();
+  const gender = document.getElementById('nGender').value;
+  const dob = document.getElementById('nDob').value.trim();
+  const chars = parseInt(document.getElementById('nChars').value);
+  const err = document.getElementById('nErrMsg');
+  err.textContent = '';
+
+  if (!surname || getStroke(surname) === null) { err.textContent = '請輸入有效姓氏'; return; }
+  if (dob && dob.length !== 6 && dob.length !== 7) { err.textContent = '日期請輸入六或七位數（可留空）'; return; }
+
+  const resultDiv = document.getElementById('namingResult');
+  const loadingDiv = document.getElementById('namingLoading');
+  const gridDiv = document.getElementById('candidatesGrid');
+  const detailDiv = document.getElementById('candDetail');
+
+  resultDiv.style.display = 'block';
+  loadingDiv.style.display = 'block';
+  gridDiv.innerHTML = '';
+  detailDiv.style.display = 'none';
+
+  setTimeout(() => {
+    const candidates = [];
+    const pools = NAME_POOL[gender] || NAME_POOL['m'];
+    const allChars = Object.values(pools).flat();
+    const tried = new Set();
+
+    // Helper: check pinned preference
+    function matchesPinned(ch1, ch2) {
+      if (!pinnedChars.length) return 0;
+      let bonus = 0;
+      for (const p of pinnedChars) {
+        if ((p.pos==='pos2'||p.pos==='any') && ch1===p.char) bonus+=15;
+        if ((p.pos==='pos3'||p.pos==='any') && ch2===p.char) bonus+=15;
+        if (p.pos==='any' && (ch1===p.char||ch2===p.char)) bonus+=5;
+      }
+      return bonus;
+    }
+    function matchesPinned1(ch1) {
+      if (!pinnedChars.length) return 0;
+      let bonus=0;
+      for(const p of pinnedChars) {
+        if(ch1===p.char) bonus+=15;
+      }
+      return bonus;
+    }
+
+    if (chars === 1) {
+      for (const ch of allChars) {
+        if (getStroke(ch) === null) continue;
+        const result = scoreCandidate(surname, ch, gender, 0);
+        if (result) {
+          result.score += matchesPinned1(ch);
+          if (result.score >= 25) candidates.push(result);
+        }
+      }
+    } else {
+      // Expanded pool: combine all available chars
+      const expandedPool = [...new Set([
+        ...allChars,
+        ...(LUCKY_POOL[gender==='m'?'m2':'f2']||[]),
+        ...(LUCKY_POOL[gender==='m'?'m3':'f3']||[]),
+        ...pinnedChars.map(p=>p.char)
+      ])].filter(ch=>getStroke(ch));
+
+      for (let i=0; i<expandedPool.length; i++) {
+        const ch1 = expandedPool[i];
+        for (let j=0; j<expandedPool.length; j++) {
+          const ch2 = expandedPool[j];
+          if (ch1===ch2) continue;
+          const combo = ch1+ch2;
+          if (tried.has(combo)) continue;
+          tried.add(combo);
+          const result = scoreCandidate(surname, combo, gender, 0);
+          if (result) {
+            result.score += matchesPinned(ch1, ch2);
+            if (result.score >= 45) candidates.push(result);
+          }
+        }
+      }
+    }
+
+    candidates.sort((a,b) => b.score - a.score);
+    const top = candidates.slice(0, 16); // Show 16 instead of 12
+
+    loadingDiv.style.display = 'none';
+
+    if (!top.length) {
+      gridDiv.innerHTML = '<div style="color:var(--warm);padding:20px;text-align:center;">未找到符合條件的名字，請調整條件後重試。</div>';
+      return;
+    }
+
+    gridDiv.innerHTML = top.map((c, i) => `
+      <div class="cand-card ${i < 3 ? 'star' : ''}" onclick="showCandDetail(${i})">
+        <div class="cand-name">${c.fullName}</div>
+        <div class="cand-score">
+          <div class="score-bar-bg"><div class="score-bar-fill" style="width:${Math.min(c.score,100)}%"></div></div>
+          <div class="score-label">${c.score}分</div>
+        </div>
+        <div style="font-size:10px;color:var(--warm);margin-bottom:5px;">命宮${c.mingGong}・${c.xinElem}心${c.hunElem}魂</div>
+        <div class="cand-tags">${c.tags.map(t=>`<span class="ctag ${t.g?'good':'bad'}">${t.t}</span>`).join('')}</div>
+      </div>
+    `).join('');
+
+    window._nameCandidates = top;
+    resultDiv.scrollIntoView({ behavior:'smooth', block:'start' });
+  }, 600);
+}
+</script>
+<script>
+
+// ═══════════════════════════════════════════════════════
+// UI HELPERS
+// ═══════════════════════════════════════════════════════
+function switchMode(mode, btn) {
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-' + mode).classList.add('active');
+  if (mode === 'naming') {
+    setTimeout(() => renderLuckyChars(), 100);
+  }
+}
+
+function switchTab(tabId, btn) {
+  const panel = btn.closest('.mode-panel');
+  panel.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  panel.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+}
+
+function clearAnalysis() {
+  document.getElementById('nameInput').value = '';
+  document.getElementById('dobInput').value = '';
+  document.getElementById('errMsg').textContent = '';
+  document.getElementById('resultArea').classList.remove('visible');
+  currentAnalysis = null;
+}
+
+function scrollTo(id) {
+  document.getElementById(id)?.scrollIntoView({ behavior:'smooth' });
+}
+
+// ─── SAVE / LOAD ───
+// 個人資料（舊版相容）
+function getSaved() { try { return JSON.parse(localStorage.getItem('jiugong_v2') || '[]'); } catch { return []; } }
+function setSaved(arr) { localStorage.setItem('jiugong_v2', JSON.stringify(arr)); }
+
+function loadSavedList() {
+  const sess = getCurrentSession();
+  const el = document.getElementById('savedList');
+  const ct = document.getElementById('savedCount');
+  let records;
+  if (sess.role === 'admin') {
+    // 管理員：顯示所有人的紀錄，附帶輸入者標籤
+    records = getAllRecords();
+  } else {
+    // 一般使用者：只顯示自己的
+    const codeKey = sess.codeKey || '';
+    records = getAllRecords().filter(r => r.codeKey === codeKey);
+  }
+  ct.textContent = records.length ? `(${records.length})` : '';
+  if (!records.length) { el.innerHTML = '<div class="saved-empty">尚無儲存資料</div>'; return; }
+  el.innerHTML = records.map((r,i) => {
+    const byTag = (sess.role==='admin' && r.inputBy) ? `<div style="font-size:10px;color:var(--gold-dark);margin-top:2px;">📝 ${r.inputBy}</div>` : '';
+    return `<div class="saved-item" onclick="loadRecordById('${r._id||i}')">
+      <div style="flex:1;">
+        <div class="saved-name">${r.label||r.name}</div>
+        <div class="saved-dob">${r.name} · 民國${(r.dob&&r.dob.length===7?r.dob.substring(0,3):r.dob?r.dob.substring(0,2):'')}年</div>
+        ${byTag}
+      </div>
+      <button class="saved-del" onclick="event.stopPropagation();deleteRecordById('${r._id||i}')">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function loadRecordById(idOrIdx) {
+  const records = getAllRecords();
+  const r = records.find(rec=>rec._id===idOrIdx) || records[parseInt(idOrIdx)];
+  if (!r) return;
+  document.getElementById('nameInput').value = r.name;
+  document.getElementById('dobInput').value = r.dob;
+  document.getElementById('genderInput').value = r.gender || 'm';
+  document.querySelectorAll('.mode-btn')[0].click();
+  analyze();
+  showToast(`已載入：${r.label||r.name}`);
+}
+
+// 保留舊版相容
+function loadRecord(i) { loadRecordById(String(i)); }
+
+function deleteRecordById(idOrIdx) {
+  const sess = getCurrentSession();
+  const records = getAllRecords();
+  const idx = records.findIndex(rec => rec._id === idOrIdx);
+  const realIdx = idx >= 0 ? idx : parseInt(idOrIdx);
+  const rec = records[realIdx];
+  if (!rec) return;
+  // 一般使用者只能刪自己的
+  if (sess.role !== 'admin' && rec.codeKey !== (sess.codeKey||'')) { showToast('無權限刪除此筆資料'); return; }
+  records.splice(realIdx, 1);
+  setAllRecords(records);
+  loadSavedList();
+  showToast('已刪除');
+}
+
+function deleteRecord(i) { deleteRecordById(String(i)); }
+
+function showSaveModal() {
+  if (!currentAnalysis) { showToast('請先執行分析'); return; }
+  document.getElementById('saveLabel').value = currentAnalysis.name;
+  document.getElementById('saveModal').classList.add('show');
+}
+function closeSaveModal() { document.getElementById('saveModal').classList.remove('show'); }
+function confirmSave() {
+  const sess = getCurrentSession();
+  const label = document.getElementById('saveLabel').value.trim() || currentAnalysis.name;
+  const records = getAllRecords();
+  const newRec = {
+    _id: Date.now() + '_' + Math.random().toString(36).slice(2,7),
+    label,
+    name: currentAnalysis.name,
+    dob: currentAnalysis.dob,
+    gender: currentAnalysis.gender,
+    savedAt: new Date().toISOString(),
+    codeKey: sess.codeKey || '__admin__',
+    inputBy: sess.userName || '未知'
+  };
+  records.unshift(newRec);
+  setAllRecords(records);
+  loadSavedList();
+  closeSaveModal();
+  showToast(`已儲存：${label}`);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// INIT
+// loadSavedList called after login
+
+
+// ─── EXTRA UI HELPERS ───
+
+
+// switchMode already updated above
+
+// renderNameTab unchanged
+
+// INIT
+checkSession();
+document.getElementById('loginInput').addEventListener('keydown', function(e) {
+  if(e.key==='Enter') doLogin();
+});
+// Step2 enter support already inline onkeydown
+
+
+</script>
+</body>
+</html>
