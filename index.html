@@ -521,10 +521,9 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--ink);color:var(--ink
     <!-- Step 1: 密碼輸入 -->
     <div id="loginStep1">
       <div class="login-field">
-        <input type="password" id="loginInput" placeholder="請輸入六位數密碼" maxlength="6"
-          inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocorrect="off"
-          autocapitalize="off" spellcheck="false"
-          onkeydown="if(event.key==='Enter')doLogin()">
+        <input type="tel" id="loginInput" placeholder="請輸入六位數密碼" maxlength="6"
+          inputmode="numeric" autocomplete="one-time-code" autocorrect="off"
+          autocapitalize="off" spellcheck="false">
       </div>
       <button class="login-btn" onclick="doLogin()">🔑 進入系統</button>
     </div>
@@ -1112,7 +1111,7 @@ function doLogin() {
   const raw = document.getElementById('loginInput').value;
   const input = raw.replace(/[\uff10-\uff19]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xfee0)).replace(/\s/g, '').trim();
   const err = document.getElementById('loginErr');
-  if (!input || input.length !== 6) { err.textContent = '請輸入六位數密碼'; return; }
+  if (!/^\d{6}$/.test(input)) { err.textContent = '請輸入6位數字密碼'; return; }
   const result = checkPassword(input);
   if (result.valid) {
     err.textContent = '';
@@ -2781,9 +2780,6 @@ function safeGetEl(id) {
 // INIT
 checkSession();
 _loadStrokeCache(); // 【新增二】頁面載入即自動帶入使用者先前輸入過的缺字筆劃
-document.getElementById('loginInput').addEventListener('keydown', function(e) {
-  if(e.key==='Enter') doLogin();
-});
 // Step2 enter support already inline onkeydown
 
 
