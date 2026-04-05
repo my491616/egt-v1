@@ -1107,31 +1107,57 @@ function checkPassword(input) {
 let _pendingLoginResult = null; // 暫存登入結果，等待輸入名稱
 
 function doLogin() {
-  // 將全形數字轉半形，並去除所有空白
-  const raw = document.getElementById('loginInput').value;
-  const input = raw.replace(/[\uff10-\uff19]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xfee0)).replace(/\s/g, '').trim();
-  const err = document.getElementById('loginErr');
-  if (!/^\d{6}$/.test(input)) { err.textContent = '請輸入6位數字密碼'; return; }
-  const result = checkPassword(input);
-  if (result.valid) {
-    err.textContent = '';
-    const codeKey = result.role === 'admin' ? '__admin__' : (result.code || input);
-    const existingName = getUserNameByCode(codeKey);
-    if (!existingName) {
-      // 首次登入：需輸入中文名稱
-      _pendingLoginResult = { ...result, codeKey };
-      document.getElementById('loginStep1').style.display = 'none';
-      document.getElementById('loginStep2').style.display = 'block';
-      document.getElementById('userNameInput').focus();
-    } else {
-      // 已有名稱：直接進入
-      _pendingLoginResult = null;
-      enterSystem(result.role, existingName, codeKey);
+  try {
+    const inputEl = document.getElementById('loginInput');
+    const errEl   = document.getElementById('loginErr');
+    if (!inputEl) return;
+
+    // 【修正】trim() 防 iPhone 自動補空白，再轉半形
+    const value = String(inputEl.value || '').trim();
+    const input = value.replace(/[\uff10-\uff19]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xfee0)).replace(/\s/g, '');
+
+    if (errEl) errEl.innerText = '';
+
+    // 【修正】6位純數字防呆
+    if (!/^\d{6}$/.test(input)) {
+      if (errEl) errEl.innerText = '請輸入6位數字密碼';
+      return;
     }
-  } else {
-    err.textContent = result.reason || '密碼錯誤，請重試';
-    document.getElementById('loginInput').value = '';
-    document.getElementById('loginInput').focus();
+
+    // 【保留】統一字串格式後，交給原有 checkPassword() 比對
+    // checkPassword() 內部處理 admin 密碼、到期驗證、jiugong_pwds_v2 storage
+    const inputPwd = String(input);
+    const result = checkPassword(inputPwd);
+
+    if (result.valid) {
+      if (errEl) errEl.innerText = '';
+      const codeKey = result.role === 'admin' ? '__admin__' : (result.code || inputPwd);
+      const existingName = getUserNameByCode(codeKey);
+      if (!existingName) {
+        // 首次登入：切換至 Step2 輸入中文名稱
+        _pendingLoginResult = { ...result, codeKey };
+        // 【修正】強制切換畫面，Safari 不省略
+        const step1 = document.getElementById('loginStep1');
+        const step2 = document.getElementById('loginStep2');
+        if (step1) step1.style.display = 'none';
+        if (step2) step2.style.display = 'block';
+        const nameEl = document.getElementById('userNameInput');
+        if (nameEl) nameEl.focus();
+      } else {
+        // 已有名稱：直接進入系統
+        _pendingLoginResult = null;
+        enterSystem(result.role, existingName, codeKey);
+      }
+    } else {
+      if (errEl) errEl.innerText = result.reason || '密碼錯誤';
+      inputEl.value = '';
+      inputEl.focus();
+    }
+
+  } catch (e) {
+    console.error('登入錯誤:', e);
+    const errEl = document.getElementById('loginErr');
+    if (errEl) errEl.innerText = '系統錯誤，請重新嘗試';
   }
 }
 
