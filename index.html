@@ -1173,6 +1173,15 @@ function doRegisterName() {
 }
 
 function enterSystem(role, userName, codeKey) {
+  // 【補強】登入後用 find() 取得 matchedEntry 設定 currentRole
+  if (role === 'admin') {
+    window.currentRole = 'admin';
+  } else {
+    var _list = getPwdList();
+    var _matchedEntry = _list.find(function(p){ return p.code === codeKey; });
+    window.currentRole = _matchedEntry ? (_matchedEntry.role || 'user') : 'user';
+    role = window.currentRole;
+  }
   sessionStorage.setItem(STORAGE_KEY_SESSION, JSON.stringify({role, userName, codeKey, time:Date.now()}));
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('mainHeader').style.display = 'flex';
@@ -2802,6 +2811,28 @@ function addPassword() {
 function safeGetEl(id) {
   return document.getElementById(id) || null;
 }
+
+// ===== 【補強】iPhone 手機列印 isMobile 偵測 =====
+(function() {
+  var isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (isMobile) {
+    document.addEventListener('DOMContentLoaded', function() {
+      var btns = document.querySelectorAll('.hbtn');
+      btns.forEach(function(btn) {
+        var txt = btn.textContent || '';
+        if (txt.indexOf('列印') !== -1 || txt.indexOf('PDF') !== -1) {
+          var origOnclick = btn.getAttribute('onclick');
+          btn.removeAttribute('onclick');
+          btn.addEventListener('click', function() {
+            alert('📱 手機版建議：\n點「分享」→「列印」或「儲存PDF」\n\n即將開啟列印視窗');
+            if (origOnclick) { try { eval(origOnclick); } catch(e) { window.print(); } }
+            else { window.print(); }
+          });
+        }
+      });
+    });
+  }
+})();
 
 // INIT
 checkSession();
