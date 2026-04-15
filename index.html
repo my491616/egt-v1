@@ -29,9 +29,9 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--ink);color:var(--ink
 /* ── LOGIN SCREEN ── */
 #loginScreen{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#0e0400 0%,#2e1000 45%,#0e0400 100%);display:flex;align-items:center;justify-content:center;}
 .login-box{background:var(--paper);border:1px solid var(--border);border-radius:16px;padding:48px 40px;width:380px;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,0.6);}
-.login-emblem{width:72px;height:72px;background:linear-gradient(135deg,#6b3a00,var(--gold));border-radius:12px;border:2px solid var(--gold-light);display:flex;align-items:center;justify-content:center;font-family:'Ma Shan Zheng',serif;font-size:36px;color:var(--ink);margin:0 auto 20px;box-shadow:0 4px 20px rgba(200,149,42,0.4);}
-.login-title{font-family:'Noto Serif TC',serif;font-size:22px;color:var(--tab-brown);font-weight:700;letter-spacing:4px;margin-bottom:6px;}
-.login-sub{font-size:12px;color:var(--warm);letter-spacing:2px;margin-bottom:32px;}
+.login-emblem{width:80px;height:80px;background:linear-gradient(135deg,#6b3a00,var(--gold));border-radius:10px;border:2px solid var(--gold-light);display:flex;align-items:center;justify-content:center;font-family:'Ma Shan Zheng',serif;font-size:42px;color:#fdf5ec;margin:0 auto 20px;box-shadow:0 4px 20px rgba(200,149,42,0.4);}
+.login-title{font-family:'Ma Shan Zheng','Noto Serif TC',serif;font-size:26px;color:var(--tab-brown);font-weight:900;letter-spacing:6px;margin-bottom:6px;}
+.login-sub{font-family:'Noto Serif TC',serif;font-size:12px;color:var(--warm);letter-spacing:3px;margin-bottom:32px;}
 .login-field{position:relative;margin-bottom:16px;}
 .login-field input{width:100%;padding:13px 16px;border:1px solid var(--border);border-radius:8px;background:var(--cream);font-size:18px;letter-spacing:8px;text-align:center;font-family:'Noto Serif TC',serif;color:var(--ink);}
 .login-field input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(200,149,42,0.15);}
@@ -289,33 +289,36 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--ink);color:var(--ink
 
 /* ── PRINT / PDF ── */
 @media print{
-  /* ── 隱藏所有 UI ── */
+  /* 隱藏所有 UI 元件 */
   #loginScreen,#adminPanel,#pdfModal,
   .app-header,.mode-bar,.sidebar,
   .form-actions,.tab-bar,.hbtn,
-  .modal-overlay,.toast,.cover-actions,
-  #panel-naming,.input-card{display:none!important;}
+  .modal-overlay,.toast,
+  .cover-actions,
+  #panel-naming,
+  #adminPanel,#pdfModal,
+  .input-card{display:none!important;}
 
-  /* ── 基本版面 ── */
+  /* 版面設定 */
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
-  @page{size:A4;margin:12mm 14mm 14mm 14mm;}
+  @page{size:A4;margin:0;}
   html,body{margin:0;padding:0;background:white!important;}
 
-  /* ── 封面頁（單獨一頁，全出血） ── */
+  /* ── 封面頁 ── */
   #coverModal{
     display:block!important;
     position:relative!important;
     inset:auto!important;
-    width:210mm!important;
-    height:297mm!important;
     background:none!important;
+    width:100%!important;
+    height:100vh!important;
     page-break-after:always;
-    break-after:page;
   }
   .cover-page{
     width:210mm!important;
-    height:297mm!important;
-    margin:0!important;
+    min-height:297mm!important;
+    max-height:297mm!important;
+    margin:0 auto!important;
     border-radius:0!important;
     box-shadow:none!important;
     background:linear-gradient(160deg,#fdf8ef 0%,#f5ead0 60%,#ede0c0 100%)!important;
@@ -325,175 +328,335 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--ink);color:var(--ink
     flex-direction:column!important;
     justify-content:center!important;
   }
+  /* 封面裝飾角落 */
   .cover-page::before{
-    content:'';position:absolute;top:0;left:0;right:0;height:12mm;
+    content:'';
+    position:absolute;
+    top:0;left:0;right:0;
+    height:12mm;
     background:linear-gradient(135deg,#6b3210,#c8952a)!important;
   }
   .cover-page::after{
-    content:'';position:absolute;bottom:0;left:0;right:0;height:12mm;
+    content:'';
+    position:absolute;
+    bottom:0;left:0;right:0;
+    height:12mm;
     background:linear-gradient(135deg,#c8952a,#6b3210)!important;
   }
-  .cover-inner{padding:18mm 22mm!important;flex:1!important;}
-  .cover-logo{font-size:80pt!important;color:#c8952a!important;text-align:center!important;line-height:1!important;margin-bottom:3mm!important;text-shadow:2px 2px 0 rgba(107,50,16,0.2)!important;}
-  .cover-title-main{font-size:26pt!important;letter-spacing:8px!important;color:#3a1800!important;text-align:center!important;margin-bottom:2mm!important;font-weight:900!important;}
-  .cover-title-sub{font-size:9pt!important;letter-spacing:3px!important;color:#8a7d6a!important;text-align:center!important;margin-bottom:6mm!important;}
-  .cover-deco{margin:0 0 6mm!important;}
+  .cover-inner{
+    padding:20mm 25mm!important;
+    flex:1!important;
+  }
+  .cover-logo{
+    font-size:88pt!important;
+    color:#c8952a!important;
+    text-align:center!important;
+    line-height:1!important;
+    margin-bottom:4mm!important;
+    text-shadow:2px 2px 0 rgba(107,50,16,0.2)!important;
+  }
+  .cover-title-main{
+    font-size:28pt!important;
+    letter-spacing:10px!important;
+    color:#3a1800!important;
+    text-align:center!important;
+    margin-bottom:2mm!important;
+    font-weight:900!important;
+  }
+  .cover-title-sub{
+    font-size:9pt!important;
+    letter-spacing:3px!important;
+    color:#8a7d6a!important;
+    text-align:center!important;
+    margin-bottom:8mm!important;
+  }
+  .cover-deco{margin:0 0 8mm!important;}
   .cover-deco-line{background:linear-gradient(to right,transparent,#c8952a,transparent)!important;}
-  .cover-deco-sym{font-size:16pt!important;color:#c8952a!important;}
-  .cover-info-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:3mm 5mm!important;margin:6mm 0!important;}
-  .cover-info-item{padding:3mm 4mm!important;border:1px solid rgba(200,149,42,0.5)!important;border-radius:2mm!important;background:rgba(200,149,42,0.06)!important;}
-  .cover-info-label{font-size:7pt!important;color:#8a7d6a!important;letter-spacing:2px!important;margin-bottom:1mm!important;}
-  .cover-info-value{font-size:14pt!important;font-weight:700!important;color:#3a1800!important;}
-  .cover-info-value.large{font-size:20pt!important;letter-spacing:4px!important;}
-  .cover-analyst{margin-top:6mm!important;padding-top:4mm!important;border-top:1px solid #d4b896!important;display:grid!important;grid-template-columns:1fr 1fr!important;gap:3mm!important;}
+  .cover-deco-sym{font-size:18pt!important;color:#c8952a!important;}
+  .cover-info-grid{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:4mm 6mm!important;
+    margin:8mm 0!important;
+  }
+  .cover-info-item{
+    padding:4mm 5mm!important;
+    border:1px solid rgba(200,149,42,0.5)!important;
+    border-radius:3mm!important;
+    background:rgba(200,149,42,0.06)!important;
+  }
+  .cover-info-label{
+    font-size:7pt!important;
+    color:#8a7d6a!important;
+    letter-spacing:2px!important;
+    margin-bottom:1.5mm!important;
+  }
+  .cover-info-value{
+    font-size:16pt!important;
+    font-weight:700!important;
+    color:#3a1800!important;
+  }
+  .cover-info-value.large{font-size:22pt!important;letter-spacing:4px!important;}
+  .cover-analyst{
+    margin-top:8mm!important;
+    padding-top:5mm!important;
+    border-top:1px solid #d4b896!important;
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:3mm!important;
+  }
   .cover-analyst-label{font-size:7pt!important;color:#8a7d6a!important;letter-spacing:2px!important;margin-bottom:1mm!important;}
-  .cover-analyst-value,.cover-analyst input{font-size:10pt!important;color:#140800!important;border:none!important;border-bottom:1px solid #d4b896!important;background:transparent!important;padding:1mm 0!important;width:100%!important;font-family:'Noto Serif TC',serif!important;}
-  .cover-footer{text-align:center!important;margin-top:6mm!important;padding-top:4mm!important;border-top:1px dashed #d4b896!important;font-size:7.5pt!important;color:#8a7d6a!important;line-height:1.8!important;}
-  .cover-seal{display:flex!important;width:28mm!important;height:28mm!important;align-items:center!important;justify-content:center!important;margin:3mm auto 0!important;}
-  .cover-seal svg{width:28mm!important;height:28mm!important;}
+  .cover-analyst-value,.cover-analyst input{
+    font-size:11pt!important;
+    color:#140800!important;
+    border:none!important;
+    border-bottom:1px solid #d4b896!important;
+    background:transparent!important;
+    padding:1mm 0!important;
+    width:100%!important;
+    font-family:'Noto Serif TC',serif!important;
+  }
+  .cover-footer{
+    text-align:center!important;
+    margin-top:8mm!important;
+    padding-top:5mm!important;
+    border-top:1px dashed #d4b896!important;
+    font-size:7.5pt!important;
+    color:#8a7d6a!important;
+    line-height:2!important;
+  }
+  .cover-seal{
+    display:flex!important;
+    width:30mm!important;
+    height:30mm!important;
+    align-items:center!important;
+    justify-content:center!important;
+    margin:4mm auto 0!important;
+    transform:none!important;
+    opacity:1!important;
+    border:none!important;
+  }
+  .cover-seal svg{
+    width:30mm!important;
+    height:30mm!important;
+  }
 
   /* ── 報告主體 ── */
-  .app-layout{display:block!important;margin:0!important;padding:0!important;}
-  .main-content{padding:0!important;overflow:visible!important;height:auto!important;}
-  .mode-panel{display:none!important;}
-  .mode-panel.active{display:block!important;}
-  .result-section{display:block!important;}
-
-  /* ── Tab 全部展開，自然流排版 ── */
-  .tab-content{
+  .app-layout{
     display:block!important;
     margin:0!important;
     padding:0!important;
   }
-
-  /* ── 每個 Tab 的標題頁眉 ── */
-  .tab-content::before{
-    display:block!important;
-    font-family:'Noto Serif TC',serif!important;
-    font-size:7.5pt!important;
-    color:#8a7d6a!important;
-    letter-spacing:3px!important;
-    text-align:center!important;
-    padding:2.5mm 0!important;
-    border-bottom:0.5px solid #d4b896!important;
-    margin-bottom:4mm!important;
+  .main-content{
+    padding:10mm 14mm!important;
   }
-  #t-name::before{content:'第一章　姓名剖析';}
-  #t-yun::before{content:'第二章　運勢分析';}
-  #t-forecast::before{content:'第三章　十年波段預告';}
-  #t-mkt::before{content:'第四章　行銷洞察';}
-  #t-mgmt::before{content:'第五章　管理策略';}
-  #t-self::before{content:'第六章　自我經營';}
-  #t-wealth::before{content:'第七章　財位格局';}
+  .mode-panel{display:none!important;}
+  .mode-panel.active{display:block!important;}
+  .result-section{display:block!important;}
 
-  /* 每個章節從新頁開始 */
-  #t-name{break-before:page;page-break-before:always;}
-  #t-yun{break-before:page;page-break-before:always;}
-  #t-forecast{break-before:page;page-break-before:always;}
-  #t-mkt{break-before:page;page-break-before:always;}
-  #t-mgmt{break-before:page;page-break-before:always;}
-  #t-self{break-before:page;page-break-before:always;}
-  #t-wealth{break-before:page;page-break-before:always;}
+  /* 頁眉裝飾條 */
+  .main-content::before{
+    content:'九宮命理分析報告';
+    display:block;
+    font-family:'Noto Serif TC',serif;
+    font-size:8pt;
+    color:#8a7d6a;
+    letter-spacing:4px;
+    text-align:center;
+    padding:3mm 0;
+    border-bottom:1px solid #d4b896;
+    margin-bottom:6mm;
+  }
 
-  /* ── 分析卡片：允許跨頁但避免孤行 ── */
+  /* Tab 內容全部展開 */
+  .tab-content{
+    display:block!important;
+    page-break-inside:avoid;
+    margin-bottom:6mm!important;
+  }
+
+  /* 分析卡片 */
   .acard{
     background:white!important;
     border:1px solid #d4b896!important;
-    border-radius:2mm!important;
-    padding:4mm 5mm!important;
-    margin-bottom:4mm!important;
-    break-inside:avoid;
+    border-radius:3mm!important;
+    padding:5mm 6mm!important;
+    margin-bottom:5mm!important;
     page-break-inside:avoid;
     box-shadow:none!important;
   }
   .acard h3{
-    font-size:11pt!important;
+    font-family:'Noto Serif TC',serif!important;
+    font-size:12pt!important;
+    font-weight:700!important;
     color:#6b3210!important;
     padding-bottom:2mm!important;
-    margin-bottom:2.5mm!important;
+    margin-bottom:3mm!important;
     border-bottom:1.5px solid #c8952a!important;
-    display:flex!important;align-items:center!important;gap:2mm!important;
-    break-after:avoid;
-    page-break-after:avoid;
+    display:flex!important;
+    align-items:center!important;
+    gap:2mm!important;
   }
-
-  /* ── 雙欄：並排顯示 ── */
-  .two-col{
-    display:grid!important;
-    grid-template-columns:1fr 1fr!important;
-    gap:4mm!important;
-    break-inside:avoid;
-    page-break-inside:avoid;
-    margin-bottom:4mm!important;
+  .card-heading{
+    font-family:'Noto Serif TC',serif!important;
+    font-size:13pt!important;
+    font-weight:700!important;
+    color:#6b3210!important;
   }
+  .input-card{display:none!important;}
 
-  /* ── 統計方塊 ── */
+  /* 統計方塊 */
   .stats-row{
     display:grid!important;
-    grid-template-columns:repeat(6,1fr)!important;
-    gap:2.5mm!important;
-    margin-bottom:4mm!important;
-    break-inside:avoid;
-    page-break-inside:avoid;
+    grid-template-columns:repeat(auto-fit,minmax(28mm,1fr))!important;
+    gap:3mm!important;
+    margin-bottom:5mm!important;
   }
   .sbox{
     background:linear-gradient(135deg,rgba(200,149,42,0.1),rgba(200,149,42,0.04))!important;
     border:1px solid rgba(200,149,42,0.3)!important;
-    border-radius:1.5mm!important;
-    padding:2.5mm 3mm!important;
+    border-radius:2mm!important;
+    padding:3mm 4mm!important;
     text-align:center!important;
   }
-  .sbox .sl{font-size:7pt!important;color:#8a7d6a!important;margin-bottom:0.5mm!important;}
-  .sbox .sv{font-size:15pt!important;font-weight:700!important;color:#c8952a!important;}
-  .sbox .ss{font-size:6.5pt!important;color:#6b3210!important;margin-top:0.5mm!important;}
+  .sbox .sl{font-size:7.5pt!important;color:#8a7d6a!important;margin-bottom:1mm!important;}
+  .sbox .sv{font-size:18pt!important;font-weight:700!important;color:#c8952a!important;}
+  .sbox .ss{font-size:7pt!important;color:#6b3210!important;margin-top:0.5mm!important;}
 
-  /* ── 九宮格 ── */
-  .palace-grid{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:1.5mm!important;max-width:60mm!important;margin:0 auto!important;}
-  .pcell{aspect-ratio:1!important;border:1px solid #d4b896!important;border-radius:1mm!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;padding:1.5mm!important;background:rgba(200,149,42,0.04)!important;}
-  .pcell.hl{background:linear-gradient(135deg,rgba(200,149,42,0.25),rgba(200,149,42,0.1))!important;border-color:#c8952a!important;}
-  .pcell .pn{font-size:14pt!important;font-weight:700!important;color:#c8952a!important;}
-  .pcell .pname{font-size:6.5pt!important;color:#6b3210!important;font-weight:600!important;}
-  .pcell .ptype{font-size:5.5pt!important;color:#8a7d6a!important;}
+  /* 九宮格 */
+  .palace-grid{
+    display:grid!important;
+    grid-template-columns:repeat(3,1fr)!important;
+    gap:2mm!important;
+    max-width:70mm!important;
+    margin:0 auto!important;
+  }
+  .pcell{
+    aspect-ratio:1!important;
+    border:1px solid #d4b896!important;
+    border-radius:1.5mm!important;
+    display:flex!important;flex-direction:column!important;
+    align-items:center!important;justify-content:center!important;
+    padding:2mm!important;
+    background:rgba(200,149,42,0.04)!important;
+  }
+  .pcell.hl{
+    background:linear-gradient(135deg,rgba(200,149,42,0.25),rgba(200,149,42,0.1))!important;
+    border-color:#c8952a!important;
+    box-shadow:0 0 0 1.5px rgba(200,149,42,0.3)!important;
+  }
+  .pcell .pn{font-size:16pt!important;font-weight:700!important;color:#c8952a!important;}
+  .pcell .pname{font-size:7pt!important;color:#6b3210!important;font-weight:600!important;}
+  .pcell .ptype{font-size:6pt!important;color:#8a7d6a!important;}
 
-  /* ── 資料列 ── */
-  .igrid{display:grid!important;grid-template-columns:24mm 1fr!important;}
-  .irow .k{font-size:8pt!important;color:#8a7d6a!important;padding:1.5mm 2.5mm!important;background:rgba(200,149,42,0.05)!important;border-bottom:0.5px solid rgba(212,184,150,0.4)!important;font-weight:600!important;}
-  .irow .v{font-size:8.5pt!important;color:#140800!important;padding:1.5mm 2.5mm!important;border-bottom:0.5px solid rgba(212,184,150,0.4)!important;line-height:1.6!important;}
+  /* 資料列表格 */
+  .igrid{display:grid!important;grid-template-columns:26mm 1fr!important;}
+  .irow .k{
+    font-size:8.5pt!important;color:#8a7d6a!important;
+    padding:2mm 3mm!important;
+    background:rgba(200,149,42,0.05)!important;
+    border-bottom:1px solid rgba(212,184,150,0.4)!important;
+    font-weight:600!important;
+  }
+  .irow .v{
+    font-size:9pt!important;color:#140800!important;
+    padding:2mm 3mm!important;
+    border-bottom:1px solid rgba(212,184,150,0.4)!important;
+    line-height:1.7!important;
+  }
 
-  /* ── 運勢 ── */
-  .fortune-ring{display:flex!important;flex-wrap:wrap!important;gap:1.5mm!important;}
-  .fnode{font-size:8pt!important;padding:1mm 2.5mm!important;border-radius:8mm!important;border:0.5px solid!important;}
+  /* 運勢環節點 */
+  .fortune-ring{display:flex!important;flex-wrap:wrap!important;gap:2mm!important;}
+  .fnode{
+    font-size:8.5pt!important;
+    padding:1mm 3mm!important;
+    border-radius:10mm!important;
+    border:1px solid!important;
+  }
   .fnode.good{background:rgba(30,90,30,0.08)!important;border-color:#3d7a3d!important;color:#1e5a1e!important;}
   .fnode.bad{background:rgba(139,26,26,0.08)!important;border-color:#c94040!important;color:#8b1a1a!important;}
   .fnode.cur{box-shadow:0 0 0 1.5px #c8952a!important;font-weight:700!important;}
-  .yun-meter{display:flex!important;align-items:center!important;gap:2.5mm!important;margin:1.5mm 0!important;}
-  .yun-track{flex:1!important;height:2.5mm!important;background:rgba(212,184,150,0.3)!important;border-radius:2mm!important;overflow:hidden!important;}
-  .yun-fill{height:100%!important;border-radius:2mm!important;background:linear-gradient(to right,#8b6800,#c8952a)!important;}
-  .yun-pct{font-size:10pt!important;font-weight:700!important;color:#c8952a!important;width:12mm!important;}
 
-  /* ── 預測圖 ── */
-  .forecast-chart{overflow:visible!important;margin:2mm 0!important;}
-  .forecast-bars{display:flex!important;gap:1.5mm!important;align-items:flex-end!important;height:38mm!important;padding:0 1mm!important;}
-  .fc-bar-wrap{flex:1!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:0.8mm!important;min-width:0!important;}
+  /* 運勢進度條 */
+  .yun-meter{display:flex!important;align-items:center!important;gap:3mm!important;margin:2mm 0!important;}
+  .yun-track{flex:1!important;height:3mm!important;background:rgba(212,184,150,0.3)!important;border-radius:2mm!important;overflow:hidden!important;}
+  .yun-fill{height:100%!important;border-radius:2mm!important;background:linear-gradient(to right,#8b6800,#c8952a)!important;}
+  .yun-pct{font-size:11pt!important;font-weight:700!important;color:#c8952a!important;width:14mm!important;}
+
+  /* 雙欄 */
+  .two-col{display:grid!important;grid-template-columns:1fr 1fr!important;gap:4mm!important;}
+
+  /* 提示區塊 */
+  .tip{
+    background:rgba(200,149,42,0.06)!important;
+    border-left:3px solid #8b6800!important;
+    padding:2mm 3mm!important;
+    font-size:9pt!important;
+    color:#6b3210!important;
+    line-height:1.8!important;
+    margin-bottom:3mm!important;
+  }
+  .pill{
+    display:inline-block!important;
+    padding:0.5mm 2mm!important;
+    background:rgba(200,149,42,0.12)!important;
+    border-radius:8mm!important;
+    font-size:8pt!important;
+    color:#8b6800!important;
+    border:1px solid rgba(200,149,42,0.25)!important;
+    margin:0.5mm!important;
+  }
+  .badge{
+    font-size:7pt!important;
+    padding:0.5mm 2mm!important;
+    border-radius:8mm!important;
+    background:#c8952a!important;
+    color:#140800!important;
+  }
+  .badge.green{background:#2a6a2a!important;color:white!important;}
+  .badge.red{background:#8b1a1a!important;color:white!important;}
+
+  /* 預測長條圖 */
+  .forecast-chart{overflow:visible!important;margin:3mm 0!important;}
+  .forecast-bars{display:flex!important;gap:2mm!important;align-items:flex-end!important;height:40mm!important;padding:0 1mm!important;}
+  .fc-bar-wrap{flex:1!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:1mm!important;min-width:0!important;}
   .fc-bar{width:100%!important;border-radius:1mm 1mm 0 0!important;min-height:2mm!important;}
   .fc-bar.good-bar{background:linear-gradient(to top,#1a5c1a,#4a9a4a)!important;}
   .fc-bar.bad-bar{background:linear-gradient(to top,#8b1a1a,#c04040)!important;}
-  .fc-bar-pct{font-size:6pt!important;position:absolute!important;top:-3.5mm!important;left:50%!important;transform:translateX(-50%)!important;white-space:nowrap!important;}
+  .fc-bar-pct{font-size:6.5pt!important;position:absolute!important;top:-4mm!important;left:50%!important;transform:translateX(-50%)!important;white-space:nowrap!important;}
   .fc-bar-pct.good-pct{color:#2a6a2a!important;}
   .fc-bar-pct.bad-pct{color:#8b1a1a!important;}
-  .fc-year{font-size:6pt!important;color:#8a7d6a!important;text-align:center!important;}
-  .fc-yun{font-size:5.5pt!important;color:#6b3210!important;text-align:center!important;font-weight:600!important;}
-  .forecast-legend{display:flex!important;gap:4mm!important;margin-top:2.5mm!important;font-size:7.5pt!important;}
+  .fc-year{font-size:6.5pt!important;color:#8a7d6a!important;text-align:center!important;}
+  .fc-yun{font-size:6pt!important;color:#6b3210!important;text-align:center!important;font-weight:600!important;}
+  .forecast-legend{display:flex!important;gap:5mm!important;margin-top:3mm!important;font-size:8pt!important;}
   .legend-item{display:flex!important;align-items:center!important;gap:1.5mm!important;}
-  .legend-dot{width:2.5mm!important;height:2.5mm!important;border-radius:0.5mm!important;}
+  .legend-dot{width:3mm!important;height:3mm!important;border-radius:0.5mm!important;}
 
-  /* ── 其他元素 ── */
-  .tip{background:rgba(200,149,42,0.06)!important;border-left:2.5px solid #8b6800!important;padding:1.5mm 2.5mm!important;font-size:8.5pt!important;color:#6b3210!important;line-height:1.7!important;margin-bottom:2.5mm!important;}
-  .pill{display:inline-block!important;padding:0.5mm 2mm!important;background:rgba(200,149,42,0.12)!important;border-radius:8mm!important;font-size:7.5pt!important;color:#8b6800!important;border:0.5px solid rgba(200,149,42,0.25)!important;margin:0.5mm!important;}
-  .badge{font-size:6.5pt!important;padding:0.5mm 1.5mm!important;border-radius:8mm!important;background:#c8952a!important;color:#140800!important;}
-  .badge.green{background:#2a6a2a!important;color:white!important;}
-  .badge.red{background:#8b1a1a!important;color:white!important;}
-  .input-card{display:none!important;}
+  /* 分頁斷點 */
+  #t-name{page-break-after:always;}
+  #t-yun{page-break-after:always;}
+  #t-forecast{page-break-after:always;}
+  #t-mkt{page-break-after:always;}
+
+  /* 頁碼頁腳（極小佔位，避免空白頁） */
+  .tab-content::after{
+    content:'';
+    display:block;
+    border-top:1px solid #d4b896;
+    margin-top:2mm;
+    padding-top:0;
+  }
+  /* 最後一個 tab：完全不加頁腳裝飾，且避免觸發空白頁 */
+  #t-wealth{
+    page-break-after:avoid!important;
+    break-after:avoid!important;
+  }
+  #t-wealth::after{
+    display:none!important;
+    margin:0!important;
+    padding:0!important;
+    border:none!important;
+  }
 }
 
 /* ── RESPONSIVE ── */
@@ -521,9 +684,8 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--ink);color:var(--ink
     <!-- Step 1: 密碼輸入 -->
     <div id="loginStep1">
       <div class="login-field">
-        <input type="tel" id="loginInput" placeholder="請輸入六位數密碼" maxlength="6"
-          inputmode="numeric" autocomplete="one-time-code" autocorrect="off"
-          autocapitalize="off" spellcheck="false">
+        <input type="password" id="loginInput" placeholder="請輸入六位數密碼" maxlength="6"
+          onkeydown="if(event.key==='Enter')doLogin()">
       </div>
       <button class="login-btn" onclick="doLogin()">🔑 進入系統</button>
     </div>
@@ -592,32 +754,6 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--ink);color:var(--ink
       </div>
     </div>
     <div style="font-size:11px;color:var(--warm);text-align:center;margin-top:8px;" id="adminMsg"></div>
-
-    <!-- ══ 新增：資料備份與還原區塊 ══ -->
-    <div class="admin-section" id="adminBackupSection">
-      <h4>💾 資料備份與還原</h4>
-      <div style="font-size:11px;color:var(--warm);margin-bottom:10px;">備份包含：所有存檔紀錄、密碼清單、使用者名稱。還原時請選擇備份檔案。</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="btn-small primary" onclick="exportData()">⬇️ 匯出備份（JSON）</button>
-        <button class="btn-small outline" onclick="document.getElementById('importFileInput').click()">⬆️ 匯入還原</button>
-        <input type="file" id="importFileInput" accept=".json" style="display:none;" onchange="importData(this)">
-      </div>
-      <div id="backupMsg" style="font-size:11px;color:var(--green);margin-top:8px;min-height:16px;"></div>
-    </div>
-    <!-- ══ 結束：資料備份與還原區塊 ══ -->
-  </div>
-</div>
-
-<!-- ══ MISSING STROKE MODAL ══ -->
-<div id="missingStrokeModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;">
-  <div style="background:var(--paper);border:1px solid var(--gold);border-radius:12px;padding:28px 32px;width:380px;box-shadow:0 16px 48px rgba(0,0,0,0.6);">
-    <div style="font-family:'Noto Serif TC',serif;font-size:16px;font-weight:700;color:var(--tab-brown);margin-bottom:6px;">✏️ 請手動輸入筆劃</div>
-    <div style="font-size:12px;color:var(--warm);margin-bottom:18px;">以下文字不在字庫中，請依康熙字典筆劃手動輸入後繼續分析</div>
-    <div id="missingStrokeFields" style="display:flex;flex-direction:column;gap:12px;margin-bottom:18px;"></div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;">
-      <button class="btn-small outline" onclick="document.getElementById('missingStrokeModal').style.display='none'">取消</button>
-      <button class="btn-small primary" onclick="confirmMissingStrokes()">✅ 確認並分析</button>
-    </div>
   </div>
 </div>
 
@@ -715,19 +851,19 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--ink);color:var(--ink
     <div class="cover-actions">
       <button class="btn btn-outline" onclick="document.getElementById('coverModal').classList.remove('show')">關閉</button>
       <button class="btn btn-primary" onclick="printCover()">🖨 列印含封面</button>
-      <button class="btn btn-pdf" onclick="quickDownloadPDF()" style="background:linear-gradient(135deg,#8b1a1a,#c94040);color:white;font-size:14px;font-weight:700;letter-spacing:1px;">📥 下載PDF 傳LINE</button>
+      <button class="btn btn-pdf" onclick="exportPDF()">📄 匯出PDF</button>
     </div>
   </div>
 </div>
 
-<!-- ══ PDF MODAL ══ -->
+<!-- ══ PDF EXPORT MODAL ══ -->
 <div id="pdfModal">
   <div class="pdf-box">
-    <h3>📄 匯出 PDF</h3>
-    <p style="font-size:12px;color:var(--warm);margin-bottom:20px;">將含封面的完整報告列印為 PDF，請在列印對話框中選擇「另存為PDF」</p>
+    <h3>📄 匯出 PDF 報告</h3>
+    <p style="font-size:12px;color:var(--warm);margin-bottom:16px;">即將開啟列印對話框，請選擇「另存為PDF」</p>
     <div style="display:flex;gap:8px;justify-content:center;">
       <button class="btn btn-outline" onclick="document.getElementById('pdfModal').classList.remove('show')">取消</button>
-      <button class="btn btn-pdf" onclick="confirmExportPDF()">📄 確認匯出 PDF</button>
+      <button class="btn btn-pdf" onclick="confirmExportPDF()">📄 確認匯出PDF</button>
     </div>
   </div>
 </div>
@@ -746,7 +882,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--ink);color:var(--ink
     <button class="hbtn" onclick="showSaveModal()">💾 儲存</button>
     <button class="hbtn" onclick="showCover()">📋 封面預覽</button>
     <button class="hbtn primary" onclick="window.print()">🖨 列印</button>
-    <button class="hbtn btn-pdf" onclick="quickDownloadPDF()" style="background:rgba(139,26,26,0.2);color:#e08080;border-color:rgba(139,26,26,0.4);">📥 下載PDF</button>
+    <button class="hbtn btn-pdf" onclick="showPDFModal()" style="background:rgba(139,26,26,0.2);color:#e08080;border-color:rgba(139,26,26,0.4);">📄 PDF</button>
     <button class="hbtn danger-btn" id="adminBtn" onclick="openAdmin()" style="display:none;">⚙️ 後台</button>
   </div>
 </header>
@@ -972,7 +1108,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--ink);color:var(--ink
         <!-- 吉祥字庫 -->
         <div class="lucky-section">
           <h4>✨ 吉祥字庫 — 點選加入第二字或第三字候選</h4>
-          <div style="font-size:11px;color:var(--warm);margin-bottom:8px;">先切換上方分頁選擇位置，再點選字即可加入候選（第二字分頁→固定名1，第三字分頁→固定名2）</div>
+          <div style="font-size:11px;color:var(--warm);margin-bottom:8px;">選取偏好的吉祥字，系統將優先排列含有這些字的名字組合</div>
           <div class="lucky-tabs">
             <button class="lucky-tab active" onclick="switchLuckyTab(this,'all')">全部</button>
             <button class="lucky-tab" onclick="switchLuckyTab(this,'pos2')">第二字（名1）</button>
@@ -981,7 +1117,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--ink);color:var(--ink
           </div>
           <div class="lucky-chars" id="luckyCharsDisplay"></div>
           <div style="margin-top:10px;">
-            <div style="font-size:11px;color:var(--warm);margin-bottom:6px;">已加入候選的吉祥字：</div>
+            <div style="font-size:11px;color:var(--warm);margin-bottom:6px;">已選取的吉祥字：</div>
             <div class="pinned-chars" id="pinnedChars"><span style="font-size:11px;color:rgba(138,125,106,0.5);">尚未選取，系統將自動推薦最優組合</span></div>
           </div>
         </div>
@@ -1035,8 +1171,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--ink);color:var(--ink
 // ═══════════════════════════════════════════════════════
 // PASSWORD / AUTH SYSTEM
 // ═══════════════════════════════════════════════════════
-// 預設最高管理者密碼（Base64混淆，原始值：888888）
-const DEFAULT_ADMIN_PWD = atob('ODg4ODg4');
+const DEFAULT_ADMIN_PWD = '888888'; // 預設最高管理者密碼
 const STORAGE_KEY_PWDS = 'jiugong_pwds_v2';
 const STORAGE_KEY_ADMIN = 'jiugong_admin_v2';
 const STORAGE_KEY_SESSION = 'jiugong_session_v2';
@@ -1046,13 +1181,9 @@ const STORAGE_KEY_ALL_RECORDS = 'jiugong_all_records_v2'; // 所有使用者資�
 function getPwdList() {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY_PWDS) || '[]'); } catch { return []; }
 }
-function setPwdList(list) {
-  try { localStorage.setItem(STORAGE_KEY_PWDS, JSON.stringify(list)); } catch(e) { showToast('⚠ 儲存密碼失敗，請確認瀏覽器儲存空間'); }
-}
+function setPwdList(list) { localStorage.setItem(STORAGE_KEY_PWDS, JSON.stringify(list)); }
 function getAdminPwd() { return localStorage.getItem(STORAGE_KEY_ADMIN) || DEFAULT_ADMIN_PWD; }
-function setAdminPwd(p) {
-  try { localStorage.setItem(STORAGE_KEY_ADMIN, p); } catch(e) { showToast('⚠ 儲存管理員密碼失敗'); }
-}
+function setAdminPwd(p) { localStorage.setItem(STORAGE_KEY_ADMIN, p); }
 
 // 使用者名稱管理
 function getUserNames() {
@@ -1061,8 +1192,7 @@ function getUserNames() {
 function setUserName(code, name) {
   const names = getUserNames();
   names[code] = name;
-  // 【補強三】寫入加 try/catch
-  try { localStorage.setItem(STORAGE_KEY_USER_NAMES, JSON.stringify(names)); } catch(e) { showToast('⚠ 儲存使用者名稱失敗'); }
+  localStorage.setItem(STORAGE_KEY_USER_NAMES, JSON.stringify(names));
 }
 function getUserNameByCode(code) {
   return getUserNames()[code] || null;
@@ -1072,9 +1202,7 @@ function getUserNameByCode(code) {
 function getAllRecords() {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY_ALL_RECORDS) || '[]'); } catch { return []; }
 }
-function setAllRecords(arr) {
-  try { localStorage.setItem(STORAGE_KEY_ALL_RECORDS, JSON.stringify(arr)); } catch(e) { showToast('⚠ 儲存紀錄失敗，請確認瀏覽器儲存空間'); }
-}
+function setAllRecords(arr) { localStorage.setItem(STORAGE_KEY_ALL_RECORDS, JSON.stringify(arr)); }
 
 function initDefaultPwds() {
   const list = getPwdList();
@@ -1087,7 +1215,6 @@ function initDefaultPwds() {
 }
 
 function checkPassword(input) {
-  input = (input||'').replace(/[\uff10-\uff19]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xfee0)).replace(/\s/g,'').trim();
   const adminPwd = getAdminPwd();
   if (input === adminPwd) return {valid:true, role:'admin'};
   const list = getPwdList();
@@ -1107,57 +1234,29 @@ function checkPassword(input) {
 let _pendingLoginResult = null; // 暫存登入結果，等待輸入名稱
 
 function doLogin() {
-  try {
-    const inputEl = document.getElementById('loginInput');
-    const errEl   = document.getElementById('loginErr');
-    if (!inputEl) return;
-
-    // 【修正】trim() 防 iPhone 自動補空白，再轉半形
-    const value = String(inputEl.value || '').trim();
-    const input = value.replace(/[\uff10-\uff19]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xfee0)).replace(/\s/g, '');
-
-    if (errEl) errEl.innerText = '';
-
-    // 【修正】6位純數字防呆
-    if (!/^\d{6}$/.test(input)) {
-      if (errEl) errEl.innerText = '請輸入6位數字密碼';
-      return;
-    }
-
-    // 【保留】統一字串格式後，交給原有 checkPassword() 比對
-    // checkPassword() 內部處理 admin 密碼、到期驗證、jiugong_pwds_v2 storage
-    const inputPwd = String(input);
-    const result = checkPassword(inputPwd);
-
-    if (result.valid) {
-      if (errEl) errEl.innerText = '';
-      const codeKey = result.role === 'admin' ? '__admin__' : (result.code || inputPwd);
-      const existingName = getUserNameByCode(codeKey);
-      if (!existingName) {
-        // 首次登入：切換至 Step2 輸入中文名稱
-        _pendingLoginResult = { ...result, codeKey };
-        // 【修正】強制切換畫面，Safari 不省略
-        const step1 = document.getElementById('loginStep1');
-        const step2 = document.getElementById('loginStep2');
-        if (step1) step1.style.display = 'none';
-        if (step2) step2.style.display = 'block';
-        const nameEl = document.getElementById('userNameInput');
-        if (nameEl) nameEl.focus();
-      } else {
-        // 已有名稱：直接進入系統
-        _pendingLoginResult = null;
-        enterSystem(result.role, existingName, codeKey);
-      }
+  const input = document.getElementById('loginInput').value.trim();
+  const err = document.getElementById('loginErr');
+  if (!input || input.length !== 6) { err.textContent = '請輸入六位數密碼'; return; }
+  const result = checkPassword(input);
+  if (result.valid) {
+    err.textContent = '';
+    const codeKey = result.role === 'admin' ? '__admin__' : (result.code || input);
+    const existingName = getUserNameByCode(codeKey);
+    if (!existingName) {
+      // 首次登入：需輸入中文名稱
+      _pendingLoginResult = { ...result, codeKey };
+      document.getElementById('loginStep1').style.display = 'none';
+      document.getElementById('loginStep2').style.display = 'block';
+      document.getElementById('userNameInput').focus();
     } else {
-      if (errEl) errEl.innerText = result.reason || '密碼錯誤';
-      inputEl.value = '';
-      inputEl.focus();
+      // 已有名稱：直接進入
+      _pendingLoginResult = null;
+      enterSystem(result.role, existingName, codeKey);
     }
-
-  } catch (e) {
-    console.error('登入錯誤:', e);
-    const errEl = document.getElementById('loginErr');
-    if (errEl) errEl.innerText = '系統錯誤，請重新嘗試';
+  } else {
+    err.textContent = result.reason || '密碼錯誤，請重試';
+    document.getElementById('loginInput').value = '';
+    document.getElementById('loginInput').focus();
   }
 }
 
@@ -1173,15 +1272,6 @@ function doRegisterName() {
 }
 
 function enterSystem(role, userName, codeKey) {
-  // 【補強】登入後用 find() 取得 matchedEntry 設定 currentRole
-  if (role === 'admin') {
-    window.currentRole = 'admin';
-  } else {
-    var _list = getPwdList();
-    var _matchedEntry = _list.find(function(p){ return p.code === codeKey; });
-    window.currentRole = _matchedEntry ? (_matchedEntry.role || 'user') : 'user';
-    role = window.currentRole;
-  }
   sessionStorage.setItem(STORAGE_KEY_SESSION, JSON.stringify({role, userName, codeKey, time:Date.now()}));
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('mainHeader').style.display = 'flex';
@@ -1208,9 +1298,7 @@ function updateHeaderUserInfo(userName, role) {
 function checkSession() {
   initDefaultPwds();
   try {
-    // 【補強三】先判斷非 null 再 parse，避免 JSON.parse(null) 崩潰
-    const rawSess = sessionStorage.getItem(STORAGE_KEY_SESSION);
-    const sess = rawSess ? JSON.parse(rawSess) : null;
+    const sess = JSON.parse(sessionStorage.getItem(STORAGE_KEY_SESSION));
     if (sess && (Date.now() - sess.time < 4*60*60*1000)) { // 4 hours
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('mainHeader').style.display = 'flex';
@@ -1347,50 +1435,6 @@ function showCover() {
   const today = new Date();
   document.getElementById('coverDate').value = `${today.getFullYear()}年${today.getMonth()+1}月${today.getDate()}日`;
   document.getElementById('coverModal').classList.add('show');
-  autoFillCoverInfo(); // 【新增三】自動填日期、掛分析師警告監聽
-}
-
-function quickDownloadPDF() {
-  if (!currentAnalysis) { showToast('請先執行分析'); return; }
-  // 【新增三】檢查分析師欄位是否填寫
-  const analystEl = safeGetEl('coverAnalyst');
-  if (analystEl && !analystEl.value.trim()) {
-    const go = confirm('⚠ 報告提供者名稱尚未填寫\n\n建議填入後再匯出，以避免未授權使用。\n\n確定繼續匯出嗎？');
-    if (!go) return;
-  }
-  // 【新增三】建議使用 Chrome
-  showToast('建議使用 Chrome → 列印 → 另存為PDF，效果最佳');
-  const coverModal = document.getElementById('coverModal');
-  const wasShowing = coverModal.classList.contains('show');
-  coverModal.classList.add('show');
-  showToast('請在列印對話框選「另存為PDF」');
-  setTimeout(() => {
-    window.print();
-    if (!wasShowing) {
-      setTimeout(() => coverModal.classList.remove('show'), 1200);
-    }
-    // 列印對話框關閉後顯示 LINE 提示
-    setTimeout(() => {
-      showLineToast();
-    }, 2000);
-  }, 400);
-}
-
-function showLineToast() {
-  // 顯示較長的 LINE 提示訊息
-  const t = document.getElementById('toast');
-  t.innerHTML = '✅ 下載完成！開啟LINE → 對話 → 「＋」→ 選取檔案 → 傳送';
-  t.style.maxWidth = '320px';
-  t.style.fontSize = '12px';
-  t.style.lineHeight = '1.6';
-  t.classList.add('show');
-  setTimeout(() => {
-    t.classList.remove('show');
-    t.innerHTML = '';
-    t.style.maxWidth = '';
-    t.style.fontSize = '';
-    t.style.lineHeight = '';
-  }, 5000);
 }
 
 function printCover() {
@@ -1415,6 +1459,8 @@ function exportPDF() {
 function confirmExportPDF() {
   if (!currentAnalysis) return;
   document.getElementById('pdfModal').classList.remove('show');
+
+  // 確保封面顯示後列印
   const coverModal = document.getElementById('coverModal');
   const wasShowing = coverModal.classList.contains('show');
   coverModal.classList.add('show');
@@ -1447,7 +1493,7 @@ function renderLuckyChars() {
   currentGender = gender;
   const pools = LUCKY_POOL;
   let chars = [];
-
+  
   if (currentLuckyTab === 'fav') {
     chars = favChars;
   } else if (currentLuckyTab === 'pos2') {
@@ -1455,6 +1501,7 @@ function renderLuckyChars() {
   } else if (currentLuckyTab === 'pos3') {
     chars = gender === 'm' ? pools.m3 : pools.f3;
   } else {
+    // all: combine pos2 + pos3 + extra from name pools
     const p2 = gender === 'm' ? pools.m2 : pools.f2;
     const p3 = gender === 'm' ? pools.m3 : pools.f3;
     const extra = Object.values(NAME_POOL[gender]).flat().filter((c,i,a)=>a.indexOf(c)===i);
@@ -1465,6 +1512,7 @@ function renderLuckyChars() {
   container.innerHTML = chars.map(ch => {
     const stroke = getStroke(ch);
     const isPinned = pinnedChars.some(p=>p.char===ch);
+    const isFav = favChars.includes(ch);
     return `<div class="lucky-char ${isPinned?'selected':''}" onclick="toggleLuckyChar('${ch}',this)" title="${ch}（${stroke||'?'}畫）">
       ${ch}
       <span class="lucky-char-stroke">${stroke||'?'}</span>
@@ -1472,27 +1520,19 @@ function renderLuckyChars() {
   }).join('');
 }
 
-// 點選字時，依目前分頁決定 pos：pos2分頁→名1，pos3分頁→名2，其他→any
 function toggleLuckyChar(ch, el) {
   const idx = pinnedChars.findIndex(p=>p.char===ch);
   if (idx >= 0) {
-    pinnedChars.splice(idx, 1);
+    pinnedChars.splice(idx,1);
     el.classList.remove('selected');
-    renderPinnedChars();
-    return;
+  } else {
+    if (pinnedChars.length >= 6) { showToast('最多選6個吉祥字'); return; }
+    const pos = currentLuckyTab === 'pos2' ? 'pos2' : currentLuckyTab === 'pos3' ? 'pos3' : 'any';
+    pinnedChars.push({char:ch, pos});
+    el.classList.add('selected');
+    // Add to favorites
+    if (!favChars.includes(ch)) favChars.push(ch);
   }
-  if (pinnedChars.length >= 6) { showToast('最多選6個吉祥字'); return; }
-  const pos = currentLuckyTab === 'pos2' ? 'pos2' : currentLuckyTab === 'pos3' ? 'pos3' : 'any';
-  // 同位置已有字時先移除舊的（每個位置限1字）
-  if (pos !== 'any') {
-    const samePos = pinnedChars.findIndex(p=>p.pos===pos);
-    if (samePos >= 0) pinnedChars.splice(samePos, 1);
-  }
-  pinnedChars.push({char:ch, pos});
-  el.classList.add('selected');
-  if (!favChars.includes(ch)) favChars.push(ch);
-  const posLabel = pos==='pos2'?'第二字（名1）':pos==='pos3'?'第三字（名2）':'任意位置';
-  showToast(`「${ch}」已加入${posLabel}候選 ✓`);
   renderPinnedChars();
 }
 
@@ -1505,7 +1545,7 @@ function renderPinnedChars() {
   container.innerHTML = pinnedChars.map((p,i) => `
     <div class="pinned-char">
       ${p.char}
-      <span class="pinned-pos">${p.pos==='pos2'?'[名1固定]':p.pos==='pos3'?'[名2固定]':'[任意位]'}</span>
+      <span class="pinned-pos">${p.pos==='pos2'?'[名1]':p.pos==='pos3'?'[名2]':'[任]'}</span>
       <span class="pinned-char-del" onclick="removePinned(${i})">✕</span>
     </div>`).join('');
 }
@@ -1591,10 +1631,7 @@ const STROKE_DB = {
 // ── 洋字補充 ──
 "洋":9,"浩":10,"海":10,"涵":11,"清":11,"渝":12,"湛":13,"溯":13,"澄":16,"濂":17,"冰":6,"霜":17,"霖":16,"霞":17,"雲":12,"霍":16,"霓":16,"露":21,"霰":22,"靖":13,"靛":16,"靚":14,"靜":16,
 // ── 其他常用字 ──
-"佑":7,"佐":7,"侑":8,"信":9,"修":10,"俊":9,"倫":10,"偉":11,"傑":12,"健":11,"偵":11,"備":12,"傑":12,"傑":12,"偉":11,"傾":13,"僑":15,"億":15,"儀":15,"儒":16,"優":17,"儲":17,"償":17,"儷":21,"兒":8,"冠":9,"典":8,"劃":14,"劇":15,"剛":10,"剪":11,"劍":15,"劉":14,"匯":13,"博":12,"博":12,"博":12,"嗣":13,"境":14,"嘉":14,"嫻":16,"嬌":15,"嬋":15,"孟":8,"孫":10,"寅":11,"寶":20,"封":9,"恒":9,"恆":10,"懷":19,"攬":25,"晨":11,"智":12,"朝":12,"樂":15,"橋":16,"歡":21,"涯":10,"洪":9,"濱":18,"燁":16,"牟":6,"珵":11,"璃":15,"璟":16,"瑚":13,"瑞":13,"皓":12,"皙":12,"睿":13,"碩":13,"禮":18,"程":12,"稼":15,"竣":12,"笙":11,"箏":14,"篤":17,"籃":20,"系":7,"純":10,"紋":10,"絢":12,"綾":14,"緯":15,"縉":16,"縫":17,"繁":17,"繡":18,"繞":18,"總":17,"纏":21,"翊":11,"翌":11,"翎":11,"翔":12,"聿":6,"肅":13,"胤":9,"胭":11,"臻":16,"若":8,"蓁":13,"蔓":14,"謙":17,"謹":18,"豫":16,"趙":14,"蹤":18,"身":7,"邦":8,"鄉":13,"鄰":17,"鑑":22,"閩":14,"閱":15,"陶":11,"陽":12,"隸":17,"雍":13,"韋":9,"韶":14,"頌":13,"頗":13,"顯":23,"颯":14,"魄":15,"鬆":18,"鯤":18,"鰻":22,"鱗":23,
-// ── 補充常用姓名字（95字） ──
-"俞":9,"倪":10,"凌":10,"刁":2,"卉":5,"卞":4,"吉":6,"喻":12,"奎":9,"奐":9,"奕":9,"奚":10,"姮":9,"娅":9,"娉":10,"娜":10,"婁":11,"婛":11,"媗":12,"嫘":14,"嫚":14,"嬅":15,"嬙":17,"嬛":17,"嬡":18,"嬤":18,"嬪":17,"嬫":18,"嬰":17,"屈":8,"岑":7,"崔":11,"常":11,"幹":13,"慈":13,"房":8,"於":8,"昝":9,"時":10,"曄":16,"曉":16,"杭":8,"樊":15,"殷":10,"滕":14,"燕":16,"狄":7,"璀":16,"璨":17,"盛":11,"磊":15,"祁":8,"祝":10,"秀":7,"竇":20,"章":11,"筱":13,"米":6,"繆":17,"臧":14,"舒":12,"苗":8,"華":12,"葛":13,"蓊":13,"蔥":15,"蕁":15,"蕊":15,"薈":16,"薏":17,"薔":16,"藜":20,"藤":18,"蘋":19,"蘿":23,"虞":13,"衛":15,"裘":13,"褚":14,"覃":12,"諸":15,"貞":9,"費":12,"賀":12,"賁":12,"郎":9,"郝":10,"鄔":12,"酆":18,"鈕":11,"閔":10,"阮":8,"香":9,"馨":20,"龐":19
-};
+"佑":7,"佐":7,"侑":8,"信":9,"修":10,"俊":9,"倫":10,"偉":11,"傑":12,"健":11,"偵":11,"備":12,"傑":12,"傑":12,"偉":11,"傾":13,"僑":15,"億":15,"儀":15,"儒":16,"優":17,"儲":17,"償":17,"儷":21,"兒":8,"冠":9,"典":8,"劃":14,"劇":15,"剛":10,"剪":11,"劍":15,"劉":14,"匯":13,"博":12,"博":12,"博":12,"嗣":13,"境":14,"嘉":14,"嫻":16,"嬌":15,"嬋":15,"孟":8,"孫":10,"寅":11,"寶":20,"封":9,"恒":9,"恆":10,"懷":19,"攬":25,"晨":11,"智":12,"朝":12,"樂":15,"橋":16,"歡":21,"涯":10,"洪":9,"濱":18,"燁":16,"牟":6,"珵":11,"璃":15,"璟":16,"瑚":13,"瑞":13,"皓":12,"皙":12,"睿":13,"碩":13,"禮":18,"程":12,"稼":15,"竣":12,"笙":11,"箏":14,"篤":17,"籃":20,"系":7,"純":10,"紋":10,"絢":12,"綾":14,"緯":15,"縉":16,"縫":17,"繁":17,"繡":18,"繞":18,"總":17,"纏":21,"翊":11,"翌":11,"翎":11,"翔":12,"聿":6,"肅":13,"胤":9,"胭":11,"臻":16,"若":8,"蓁":13,"蔓":14,"謙":17,"謹":18,"豫":16,"趙":14,"蹤":18,"身":7,"邦":8,"鄉":13,"鄰":17,"鑑":22,"閩":14,"閱":15,"陶":11,"陽":12,"隸":17,"雍":13,"韋":9,"韶":14,"頌":13,"頗":13,"顯":23,"颯":14,"魄":15,"鬆":18,"鯤":18,"鰻":22,"鱗":23};
 
 
 </script>
@@ -1748,54 +1785,8 @@ function calcAge(dobStr) {
 
 function calcCurrentYun(dobInfo) {
   const age = dobInfo.age;
-  // 虛歲1歲、11歲、21歲對應索引0（長生），公式：(age-1)%10
-  const yunIdx = (age - 1) % 10;
-  return YUN_ORDER[yunIdx];
-}
-
-// ── 缺字筆劃手動輸入 ──
-let _pendingAnalysis = null;
-function showMissingStrokeModal(missingChars, name, dob, gender) {
-  _pendingAnalysis = { name, dob, gender };
-  const fields = document.getElementById('missingStrokeFields');
-  fields.innerHTML = missingChars.map(ch => `
-    <div style="display:flex;align-items:center;gap:10px;">
-      <div style="font-family:'Noto Serif TC',serif;font-size:24px;font-weight:700;color:var(--tab-brown);width:36px;text-align:center;">${ch}</div>
-      <div style="flex:1;">
-        <label style="font-size:11px;color:var(--warm);display:block;margin-bottom:3px;">「${ch}」的筆劃數</label>
-        <input type="number" min="1" max="36" id="ms_${ch}" placeholder="請輸入筆劃數"
-          inputmode="numeric" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:16px;background:var(--cream);color:var(--ink);">
-      </div>
-    </div>`).join('');
-  const modal = document.getElementById('missingStrokeModal');
-  modal.style.display = 'flex';
-  // 自動 focus 第一個輸入
-  setTimeout(() => { const first = fields.querySelector('input'); if (first) first.focus(); }, 100);
-}
-function confirmMissingStrokes() {
-  const fields = document.getElementById('missingStrokeFields');
-  const inputs = fields.querySelectorAll('input');
-  let allFilled = true;
-  inputs.forEach(inp => {
-    const ch = inp.id.replace('ms_', '');
-    const val = parseInt(inp.value);
-    if (!val || val < 1 || val > 64) { inp.style.borderColor = 'var(--red-light)'; allFilled = false; }
-    else {
-        STROKE_DB[ch] = val;
-        _saveStrokeToCache(ch, val); // 【新增二】記錄到 localStorage 快取，下次自動帶入
-        inp.style.borderColor = '';
-      }
-  });
-  if (!allFilled) return;
-  document.getElementById('missingStrokeModal').style.display = 'none';
-  // 重新觸發分析
-  if (_pendingAnalysis) {
-    document.getElementById('nameInput').value = _pendingAnalysis.name;
-    document.getElementById('dobInput').value = _pendingAnalysis.dob;
-    document.getElementById('genderInput').value = _pendingAnalysis.gender;
-    _pendingAnalysis = null;
-    analyze();
-  }
+  const yunIdx = age % 10;
+  return YUN_ORDER[yunIdx % 10];
 }
 
 function analyze() {
@@ -1810,10 +1801,7 @@ function analyze() {
 
   const strokes = calcStrokes(name);
   const missing = strokes.filter(s => s.stroke === null).map(s => s.char);
-  if (missing.length) {
-    showMissingStrokeModal(missing, name, dob, gender);
-    return;
-  }
+  if (missing.length) { err.textContent = `找不到筆劃資料：${missing.join('、')}`; return; }
 
   const dobInfo = calcAge(dob);
   const mingGong = calcMingGong(strokes);
@@ -1853,8 +1841,8 @@ function renderNameTab(d) {
     <div class="sbox"><div class="sl">姓名</div><div class="sv" style="font-size:24px;letter-spacing:3px;">${d.name}</div></div>
     <div class="sbox"><div class="sl">總筆劃</div><div class="sv">${d.totalStrokes}</div><div class="ss">${d.strokes.map(s=>s.stroke).join(' + ')}</div></div>
     <div class="sbox"><div class="sl">命宮數</div><div class="sv">${d.mingGong}</div><div class="ss">${STAR_MAP[d.mingGong]?.name||''}</div></div>
-    <div class="sbox"><div class="sl">心屬（主）60%</div><div class="sv">${d.xinElement}</div><div class="ss">思維・個性</div></div>
-    <div class="sbox"><div class="sl">魂屬（輔）40%</div><div class="sv">${d.hunElement}</div><div class="ss">動作・行為</div></div>
+    <div class="sbox"><div class="sl">心屬（主）</div><div class="sv">${d.xinElement}</div><div class="ss">六成能量</div></div>
+    <div class="sbox"><div class="sl">魂屬（輔）</div><div class="sv">${d.hunElement}</div><div class="ss">四成能量</div></div>
     <div class="sbox"><div class="sl">年齡（虛歲）</div><div class="sv">${d.dobInfo.age}</div><div class="ss">${'民國'+(d.dob.length===7?d.dob.substring(0,3):d.dob.substring(0,2))+'年生'}</div></div>
   `;
 
@@ -1870,8 +1858,8 @@ function renderNameTab(d) {
     ['命宮數',d.mingGong],
     ['星曜名稱',`${star.name||''} — ${star.desc||''}`],
     ['命格類型',star.type||''],
-    ['心屬五行（60%）',`${d.xinElement}（心屬${d.xinZhu}宮）${ELEM_SOUL[d.xinElement]?.思維||''}`],
-    ['魂屬五行（40%）',`${d.hunElement}（魂屬${d.hunZhu}宮）${ELEM_SOUL[d.hunElement]?.思維||''}`],
+    ['心屬五行',`${d.xinElement}（心屬${d.xinZhu}宮）${ELEM_SOUL[d.xinElement]?.思維||''}`],
+    ['魂屬五行',`${d.hunElement}（魂屬${d.hunZhu}宮）${ELEM_SOUL[d.hunElement]?.思維||''}`],
     ['各字筆劃',d.strokes.map(s=>`${s.char}＝${s.stroke}畫`).join('　')],
   ].map(([k,v]) => `<div class="irow"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
 
@@ -1916,17 +1904,17 @@ function renderYunTab(d) {
 }
 
 function renderMktTab(d) {
-  function mktHTML(data, el, pct) {
+  function mktHTML(data, el) {
     if (!data) return '';
-    return `<div class="tip">五行屬<strong>${el}</strong>　<span style="color:var(--gold);font-weight:700;">${pct}</span></div><div class="igrid">
+    return `<div class="tip">五行屬<strong>${el}</strong></div><div class="igrid">
       <div class="irow"><div class="k">初次接觸</div><div class="v">${data.unfamiliar||''}</div></div>
       <div class="irow"><div class="k">熟識之後</div><div class="v">${data.familiar||''}</div></div>
       <div class="irow"><div class="k">溝通對策</div><div class="v">${data.method||''}</div></div>
       <div class="irow"><div class="k">客戶類型</div><div class="v">${data.type||''}</div></div>
     </div>`;
   }
-  document.getElementById('mktMain').innerHTML = mktHTML(MARKETING_DATA[d.xinElement], d.xinElement, '心屬（60%）主導');
-  document.getElementById('mktSub').innerHTML = mktHTML(MARKETING_DATA[d.hunElement], d.hunElement, '魂屬（40%）輔助');
+  document.getElementById('mktMain').innerHTML = mktHTML(MARKETING_DATA[d.xinElement], d.xinElement);
+  document.getElementById('mktSub').innerHTML = mktHTML(MARKETING_DATA[d.hunElement], d.hunElement);
   document.getElementById('mktMoney').innerHTML = `<div class="igrid">
     <div class="irow"><div class="k">財格</div><div class="v">${d.caiGeName||''} — ${d.caiGe.you?'有財格':'無財格'}</div></div>
     <div class="irow"><div class="k">財格特質</div><div class="v">${d.caiGe.you_desc||''}</div></div>
@@ -1934,17 +1922,17 @@ function renderMktTab(d) {
 }
 
 function renderMgmtTab(d) {
-  function mgmtHTML(data, el, pct) {
+  function mgmtHTML(data, el) {
     if (!data) return '';
-    return `<div class="tip">五行屬<strong>${el}</strong>　<span style="color:var(--gold);font-weight:700;">${pct}</span></div><div class="igrid">
+    return `<div class="tip">五行屬<strong>${el}</strong></div><div class="igrid">
       <div class="irow"><div class="k">人格特點</div><div class="v">${data.特點||''}</div></div>
       <div class="irow"><div class="k">主要缺點</div><div class="v">${data.缺點||''}</div></div>
       <div class="irow"><div class="k">招攬方式</div><div class="v">${data.增員||''}</div></div>
       <div class="irow"><div class="k">入職後培育</div><div class="v">${data.上班||''}</div></div>
     </div>`;
   }
-  document.getElementById('mgmtMain').innerHTML = mgmtHTML(MGMT_DATA[d.xinElement], d.xinElement, '心屬（60%）主導');
-  document.getElementById('mgmtSub').innerHTML = mgmtHTML(MGMT_DATA[d.hunElement], d.hunElement, '魂屬（40%）輔助');
+  document.getElementById('mgmtMain').innerHTML = mgmtHTML(MGMT_DATA[d.xinElement], d.xinElement);
+  document.getElementById('mgmtSub').innerHTML = mgmtHTML(MGMT_DATA[d.hunElement], d.hunElement);
   document.getElementById('mgmtRecruit').innerHTML = `<div class="igrid">
     <div class="irow"><div class="k">當前運勢</div><div class="v">${d.currentYun} — ${d.isGoodYun?'強運期（主觀強，較難招攬）':'弱運期（意識鬆，較易說服）'}</div></div>
     <div class="irow"><div class="k">招攬建議</div><div class="v">${d.isGoodYun?'此時動能強，主觀意識高，宜善用其人格特質與個性切入，以讚美及引導「不服輸」氛圍效果最佳。':'此時動能弱，意識鬆懈，較容易被說服。採推、誘、利並用方法均見效。'}</div></div>
@@ -1992,8 +1980,8 @@ function renderForecastTab(d) {
     const yr = currentYear + i;
     // 虛歲：出生年即1歲，每過一個西曆年+1
     const ageAtYear = yr - d.dobInfo.adYear + 1;
-    const yunIdx = (ageAtYear - 1) % 10;
-    const yunName = YUN_ORDER[yunIdx];
+    const yunIdx = ageAtYear % 10;
+    const yunName = YUN_ORDER[((yunIdx % 10) + 10) % 10];
     const pct = YUN_PCT[yunName] || 50;
     const isGood = YUN_GOOD[yunName];
     const isCurrent = i === 0;
@@ -2078,21 +2066,13 @@ function scoreCandidate(surname, nameChars, gender, dobDays) {
   const xinElem = ELEM[xinZhu];
   const hunElem = ELEM[hunZhu];
 
-  // ── 優先過濾：避開五鬼星(9)與困象宮(5,0) ──
-  // 除非使用者有勾選相關目標（例如貴人/變化），否則直接排除
-  const allowBadPalace = selectedGoals.includes('接受五鬼/困象格局');
-  if (!allowBadPalace) {
-    if (mingGong === 9) return null; // 五鬼星，排除
-    if (mingGong === 5) return null; // 困象宮，排除
-    if (mingGong === 0) return null; // 文曲困象，排除
-  }
-
   let score = 0;
   const tags = [];
 
   // 命宮評分 (最高35分)
   const goodPalace = [1,2,3,4,6,7,8];
   if (goodPalace.includes(mingGong)) { score += 20; tags.push({t:'命宮佳', g:true}); }
+  else if (mingGong === 5) { score -= 10; tags.push({t:'5宮困象', g:false}); }
 
   // 星曜加分
   if ([1,2,8].includes(mingGong)) { score += 8; tags.push({t:STAR_MAP[mingGong]?.name, g:true}); }
@@ -2215,7 +2195,7 @@ function clearNaming() {
   renderLuckyChars();
 }
 
-// ── generateNames 改進版：支援吉祥字優先，固定字強制包含 ──
+// ── generateNames 改進版：支援吉祥字優先 ──
 
 function generateNames() {
   const surname = document.getElementById('nSurname').value.trim();
@@ -2238,40 +2218,20 @@ function generateNames() {
   gridDiv.innerHTML = '';
   detailDiv.style.display = 'none';
 
-  // Update heading to show which chars are pinned
-  const headingEl = resultDiv.querySelector('h3');
-  if (headingEl) {
-    const fixedDesc = pinnedChars.length ?
-      '（已固定：' + pinnedChars.map(p=>p.char+(p.pos==='pos2'?'為名1':p.pos==='pos3'?'為名2':'')).join('、') + '）' : '';
-    headingEl.textContent = '推薦名字候選 ' + fixedDesc;
-  }
-
   setTimeout(() => {
     const candidates = [];
     const pools = NAME_POOL[gender] || NAME_POOL['m'];
     const allChars = Object.values(pools).flat();
     const tried = new Set();
 
-    // Separate pinned chars by position
-    const fixed2 = pinnedChars.filter(p=>p.pos==='pos2').map(p=>p.char);
-    const fixed3 = pinnedChars.filter(p=>p.pos==='pos3').map(p=>p.char);
-    const fixedAny = pinnedChars.filter(p=>p.pos==='any').map(p=>p.char);
-
-    // Build expanded pool
-    const expandedPool = [...new Set([
-      ...allChars,
-      ...(LUCKY_POOL[gender==='m'?'m2':'f2']||[]),
-      ...(LUCKY_POOL[gender==='m'?'m3':'f3']||[]),
-      ...pinnedChars.map(p=>p.char)
-    ])].filter(ch=>getStroke(ch));
-
+    // Helper: check pinned preference
     function matchesPinned(ch1, ch2) {
       if (!pinnedChars.length) return 0;
       let bonus = 0;
       for (const p of pinnedChars) {
-        if (p.pos==='pos2' && ch1===p.char) bonus+=30;
-        if (p.pos==='pos3' && ch2===p.char) bonus+=30;
-        if (p.pos==='any' && (ch1===p.char||ch2===p.char)) bonus+=20;
+        if ((p.pos==='pos2'||p.pos==='any') && ch1===p.char) bonus+=15;
+        if ((p.pos==='pos3'||p.pos==='any') && ch2===p.char) bonus+=15;
+        if (p.pos==='any' && (ch1===p.char||ch2===p.char)) bonus+=5;
       }
       return bonus;
     }
@@ -2279,148 +2239,48 @@ function generateNames() {
       if (!pinnedChars.length) return 0;
       let bonus=0;
       for(const p of pinnedChars) {
-        if(ch1===p.char) bonus+=30;
+        if(ch1===p.char) bonus+=15;
       }
       return bonus;
     }
 
     if (chars === 1) {
-      // 1-char name
-      const pool1 = fixed2.length ? fixed2 : expandedPool;
-      for (const ch of pool1) {
+      for (const ch of allChars) {
         if (getStroke(ch) === null) continue;
         const result = scoreCandidate(surname, ch, gender, 0);
         if (result) {
           result.score += matchesPinned1(ch);
-          // If there are fixed2 chars, always include them regardless of score
-          const minScore = fixed2.length ? 0 : 25;
-          if (result.score >= minScore) candidates.push(result);
+          if (result.score >= 25) candidates.push(result);
         }
       }
     } else {
-      // 2-char name: ch1 = 名1 (pos2), ch2 = 名2 (pos3)
-      // If fixed2 and fixed3 both set, only generate those specific combos
-      if (fixed2.length && fixed3.length) {
-        for (const ch1 of fixed2) {
-          for (const ch2 of fixed3) {
-            if (ch1===ch2) continue;
-            const result = scoreCandidate(surname, ch1+ch2, gender, 0);
-            if (result) {
-              result.score += 60; // big bonus for exact match
-              candidates.push(result);
-            }
-          }
-        }
-        // Also add free combos with just fixed2
-        for (const ch1 of fixed2) {
-          for (const ch2 of expandedPool) {
-            if (ch1===ch2) continue;
-            if (fixed3.includes(ch2)) continue; // already added
-            const combo = ch1+ch2;
-            if (tried.has(combo)) continue;
-            tried.add(combo);
-            const result = scoreCandidate(surname, combo, gender, 0);
-            if (result) {
-              result.score += 30;
-              if (result.score >= 40) candidates.push(result);
-            }
-          }
-        }
-        // Also add free combos with just fixed3
-        for (const ch2 of fixed3) {
-          for (const ch1 of expandedPool) {
-            if (ch1===ch2) continue;
-            if (fixed2.includes(ch1)) continue; // already added
-            const combo = ch1+ch2;
-            if (tried.has(combo)) continue;
-            tried.add(combo);
-            const result = scoreCandidate(surname, combo, gender, 0);
-            if (result) {
-              result.score += 30;
-              if (result.score >= 40) candidates.push(result);
-            }
-          }
-        }
-      } else if (fixed2.length) {
-        // fixed name1, free name2
-        for (const ch1 of fixed2) {
-          for (const ch2 of expandedPool) {
-            if (ch1===ch2) continue;
-            const combo = ch1+ch2;
-            if (tried.has(combo)) continue;
-            tried.add(combo);
-            const result = scoreCandidate(surname, combo, gender, 0);
-            if (result) {
-              result.score += 30;
-              if (result.score >= 30) candidates.push(result);
-            }
-          }
-        }
-        // Also add some free combos for variety
-        for (let i=0; i<expandedPool.length && i<30; i++) {
-          const ch1 = expandedPool[i];
-          if (fixed2.includes(ch1)) continue;
-          for (let j=0; j<expandedPool.length; j++) {
-            const ch2 = expandedPool[j];
-            if (ch1===ch2) continue;
-            const combo = ch1+ch2;
-            if (tried.has(combo)) continue;
-            tried.add(combo);
-            const result = scoreCandidate(surname, combo, gender, 0);
-            if (result && result.score >= 55) candidates.push(result);
-          }
-        }
-      } else if (fixed3.length) {
-        // free name1, fixed name2
-        for (const ch2 of fixed3) {
-          for (const ch1 of expandedPool) {
-            if (ch1===ch2) continue;
-            const combo = ch1+ch2;
-            if (tried.has(combo)) continue;
-            tried.add(combo);
-            const result = scoreCandidate(surname, combo, gender, 0);
-            if (result) {
-              result.score += 30;
-              if (result.score >= 30) candidates.push(result);
-            }
-          }
-        }
-        // Also add some free combos for variety
-        for (let i=0; i<expandedPool.length && i<30; i++) {
-          const ch1 = expandedPool[i];
-          for (let j=0; j<expandedPool.length; j++) {
-            const ch2 = expandedPool[j];
-            if (ch1===ch2) continue;
-            if (fixed3.includes(ch2)) continue;
-            const combo = ch1+ch2;
-            if (tried.has(combo)) continue;
-            tried.add(combo);
-            const result = scoreCandidate(surname, combo, gender, 0);
-            if (result && result.score >= 55) candidates.push(result);
-          }
-        }
-      } else {
-        // No fixed chars: normal mode
-        for (let i=0; i<expandedPool.length; i++) {
-          const ch1 = expandedPool[i];
-          for (let j=0; j<expandedPool.length; j++) {
-            const ch2 = expandedPool[j];
-            if (ch1===ch2) continue;
-            const combo = ch1+ch2;
-            if (tried.has(combo)) continue;
-            tried.add(combo);
-            const result = scoreCandidate(surname, combo, gender, 0);
-            if (result) {
-              result.score += matchesPinned(ch1, ch2);
-              if (result.score >= 45) candidates.push(result);
-            }
+      // Expanded pool: combine all available chars
+      const expandedPool = [...new Set([
+        ...allChars,
+        ...(LUCKY_POOL[gender==='m'?'m2':'f2']||[]),
+        ...(LUCKY_POOL[gender==='m'?'m3':'f3']||[]),
+        ...pinnedChars.map(p=>p.char)
+      ])].filter(ch=>getStroke(ch));
+
+      for (let i=0; i<expandedPool.length; i++) {
+        const ch1 = expandedPool[i];
+        for (let j=0; j<expandedPool.length; j++) {
+          const ch2 = expandedPool[j];
+          if (ch1===ch2) continue;
+          const combo = ch1+ch2;
+          if (tried.has(combo)) continue;
+          tried.add(combo);
+          const result = scoreCandidate(surname, combo, gender, 0);
+          if (result) {
+            result.score += matchesPinned(ch1, ch2);
+            if (result.score >= 45) candidates.push(result);
           }
         }
       }
     }
 
     candidates.sort((a,b) => b.score - a.score);
-    const top = candidates.slice(0, 16);
+    const top = candidates.slice(0, 16); // Show 16 instead of 12
 
     loadingDiv.style.display = 'none';
 
@@ -2591,252 +2451,11 @@ function showToast(msg) {
 
 // renderNameTab unchanged
 
-// ═══════════════════════════════════════════════════════
-// 【新增一】資料備份與還原
-// ═══════════════════════════════════════════════════════
-
-// exportData：將所有 localStorage 相關資料打包成 JSON 下載
-// ── exportData：匯出備份，原始資料外層包版本結構 ──
-function exportData() {
-  try {
-    // 原本所有 localStorage 資料，結構完全不變
-    const innerData = {
-      _version: 1,
-      _exportedAt: new Date().toISOString(),
-      jiugong_pwds_v2:         localStorage.getItem(STORAGE_KEY_PWDS)          || '[]',
-      jiugong_admin_v2:        localStorage.getItem(STORAGE_KEY_ADMIN)         || '',
-      jiugong_user_names_v2:   localStorage.getItem(STORAGE_KEY_USER_NAMES)    || '{}',
-      jiugong_all_records_v2:  localStorage.getItem(STORAGE_KEY_ALL_RECORDS)   || '[]',
-      jiugong_stroke_cache_v1: localStorage.getItem('jiugong_stroke_cache_v1') || '{}'
-    };
-    // 【二】外層包版本結構，innerData 原封不動放入 data 欄位
-    const backup = {
-      version: '1.0',
-      timestamp: Date.now(),
-      data: innerData
-    };
-    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    const d = new Date();
-    a.download = `九宮命理備份_${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.json`;
-    a.href = url;
-    a.click();
-    URL.revokeObjectURL(url);
-    const msg = safeGetEl('backupMsg');
-    if (msg) msg.textContent = '✅ 備份完成，請妥善保存此檔案';
-  } catch(e) {
-    const msg = safeGetEl('backupMsg');
-    if (msg) msg.textContent = '❌ 備份失敗：' + e.message;
-  }
-}
-
-// ── safeImportToStorage：驗證後安全寫入 localStorage ──
-// 單筆失敗不中斷，全部完成後 reload
-function safeImportToStorage(data) {
-  // 再次確認 data 為合法 object（防呆）
-  if (!data || typeof data !== 'object' || Array.isArray(data)) {
-    alert('資料格式驗證失敗，還原中止');
-    return;
-  }
-  // 清除現有資料
-  localStorage.clear();
-  // 逐筆寫入，單筆失敗不中斷整體流程
-  for (const key in data) {
-    if (!Object.prototype.hasOwnProperty.call(data, key)) continue;
-    try {
-      const val = data[key];
-      // 只寫入字串值（localStorage 只接受字串）
-      if (typeof val === 'string') {
-        localStorage.setItem(key, val);
-      }
-    } catch(e) {
-      // 單筆寫入失敗：靜默略過，不中斷
-    }
-  }
-  alert('資料還原成功');
-  location.reload();
-}
-
-// ── importData：讀取 JSON 備份檔，覆蓋還原 ──
-function importData(inputEl) {
-  const file = inputEl.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    // 【一】步驟1：JSON.parse 獨立 try/catch，失敗不寫入
-    let parsed;
-    try {
-      const raw = e.target.result;
-      if (!raw || typeof raw !== 'string') { alert('備份檔格式錯誤或損壞'); return; }
-      parsed = JSON.parse(raw);
-    } catch(e) {
-      // JSON.parse 失敗 → 絕不寫入 localStorage
-      alert('備份檔格式錯誤或損壞'); return;
-    }
-
-    // 【一】步驟2：確認為合法 object
-    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
-      alert('備份檔格式錯誤或損壞'); return;
-    }
-
-    // 【二/三】步驟3：解開版本外層，處理新版與舊版相容
-    let data;
-    if (parsed.version && parsed.data && typeof parsed.data === 'object') {
-      // 新版格式：{ version, timestamp, data: {...} }
-      data = parsed.data;
-    } else if (parsed._version) {
-      // 舊版格式：直接是 innerData
-      // 【三】提示版本不符，讓使用者決定是否繼續
-      const goContinue = confirm('此為舊版備份，可能不相容。\n確定繼續還原嗎？');
-      if (!goContinue) return;
-      data = parsed;
-    } else {
-      // 【三】完全沒有版本欄位
-      const goContinue = confirm('此為舊版備份，可能不相容。\n確定繼續還原嗎？');
-      if (!goContinue) return;
-      data = parsed;
-    }
-
-    // 【一】步驟4：最終確認覆蓋
-    const confirmed = confirm('確定覆蓋目前所有資料？\n此操作無法復原，建議先匯出現有備份。');
-    if (!confirmed) return;
-
-    // 【一】步驟5：交給 safeImportToStorage 安全寫入
-    safeImportToStorage(data);
-  };
-  reader.readAsText(file);
-  inputEl.value = ''; // 允許重複選同一檔案
-}
-
-// ═══════════════════════════════════════════════════════
-// 【新增二】缺字筆劃 localStorage 快取
-// ═══════════════════════════════════════════════════════
-
-const STROKE_CACHE_KEY = 'jiugong_stroke_cache_v1';
-
-// 載入快取到 STROKE_DB（在頁面初始化時呼叫）
-function _loadStrokeCache() {
-  try {
-    // 【補強三】先判斷非 null 再 parse
-    const raw = localStorage.getItem(STROKE_CACHE_KEY);
-    const cache = (raw && typeof raw === 'string') ? JSON.parse(raw) : {};
-    if (!cache || typeof cache !== 'object') return;
-    for (const [ch, val] of Object.entries(cache)) {
-      if (!STROKE_DB[ch] && typeof val === 'number' && val > 0) {
-        STROKE_DB[ch] = val;
-      }
-    }
-    // 靜默載入，不需 toast
-  } catch(e) {}
-}
-
-// 儲存單字筆劃到快取
-function _saveStrokeToCache(ch, val) {
-  try {
-    // 【補強三】先判斷非 null 再 parse
-    const raw = localStorage.getItem(STROKE_CACHE_KEY);
-    const cache = (raw && typeof raw === 'string') ? JSON.parse(raw) : {};
-    cache[ch] = val;
-    localStorage.setItem(STROKE_CACHE_KEY, JSON.stringify(cache));
-  } catch(e) {}
-}
-
-// ═══════════════════════════════════════════════════════
-// 【新增三】PDF 封面自動填日期 & 分析師警告
-// ═══════════════════════════════════════════════════════
-
-// autoFillCoverInfo：自動填今日日期，分析師欄位保持空白不預填
-function autoFillCoverInfo() {
-  const dateEl = safeGetEl('coverDate');
-  if (dateEl && !dateEl.value) {
-    const t = new Date();
-    dateEl.value = `${t.getFullYear()}年${t.getMonth()+1}月${t.getDate()}日`;
-  }
-  // 分析師欄位絕對不自動填入，僅掛監聽（若尚未掛過）
-  const analystEl = safeGetEl('coverAnalyst');
-  if (analystEl && !analystEl.dataset.warnBound) {
-    analystEl.dataset.warnBound = '1';
-    analystEl.addEventListener('blur', _checkAnalystWarning);
-  }
-}
-
-// _checkAnalystWarning：分析師欄位為空時顯示提示（不強制）
-function _checkAnalystWarning() {
-  const analystEl = safeGetEl('coverAnalyst');
-  let warnEl = safeGetEl('analystWarn');
-  if (!warnEl && analystEl) {
-    // 動態建立提示元素，插在欄位後方
-    warnEl = document.createElement('div');
-    warnEl.id = 'analystWarn';
-    warnEl.style.cssText = 'font-size:10px;color:#c94040;margin-top:3px;';
-    analystEl.parentNode.appendChild(warnEl);
-  }
-  if (warnEl) {
-    warnEl.textContent = analystEl && !analystEl.value.trim()
-      ? '⚠ 請確認報告提供者名稱，以避免未授權使用'
-      : '';
-  }
-}
-
-// ═══════════════════════════════════════════════════════
-// 【新增四】防呆：addPassword 加強驗證（不改原函式，改用 wrapper 攔截）
-// ═══════════════════════════════════════════════════════
-
-// 在原本 addPassword 之前加一層前置驗證
-const _origAddPassword = addPassword;
-// 用 shadow function 覆寫，邏輯完全相容原版，只加數字驗證
-function addPassword() {
-  const code = (safeGetEl('newPwd') || {}).value || '';
-  const adminMsg = safeGetEl('adminMsg');
-  // 防空值
-  if (!code.trim()) {
-    if (adminMsg) adminMsg.textContent = '❌ 密碼不可為空';
-    return;
-  }
-  // 防非數字
-  if (!/^\d+$/.test(code.trim())) {
-    if (adminMsg) adminMsg.textContent = '❌ 密碼只能包含數字';
-    return;
-  }
-  // 長度驗證（原版已有，保留呼叫原版）
-  _origAddPassword();
-}
-
-// ═══════════════════════════════════════════════════════
-// 【新增五】DOM 安全取得 helper
-// ═══════════════════════════════════════════════════════
-
-// safeGetEl：取得 DOM 元素，查無時回傳 null 而非拋錯
-function safeGetEl(id) {
-  return document.getElementById(id) || null;
-}
-
-// ===== 【補強】iPhone 手機列印 isMobile 偵測 =====
-(function() {
-  var isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  if (isMobile) {
-    document.addEventListener('DOMContentLoaded', function() {
-      var btns = document.querySelectorAll('.hbtn');
-      btns.forEach(function(btn) {
-        var txt = btn.textContent || '';
-        if (txt.indexOf('列印') !== -1 || txt.indexOf('PDF') !== -1) {
-          var origOnclick = btn.getAttribute('onclick');
-          btn.removeAttribute('onclick');
-          btn.addEventListener('click', function() {
-            alert('📱 手機版建議：\n點「分享」→「列印」或「儲存PDF」\n\n即將開啟列印視窗');
-            if (origOnclick) { try { eval(origOnclick); } catch(e) { window.print(); } }
-            else { window.print(); }
-          });
-        }
-      });
-    });
-  }
-})();
-
 // INIT
 checkSession();
-_loadStrokeCache(); // 【新增二】頁面載入即自動帶入使用者先前輸入過的缺字筆劃
+document.getElementById('loginInput').addEventListener('keydown', function(e) {
+  if(e.key==='Enter') doLogin();
+});
 // Step2 enter support already inline onkeydown
 
 
