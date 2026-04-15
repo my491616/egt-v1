@@ -508,8 +508,6 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--ink);color:var(--ink
   .header-btns{gap:4px;}
   .hbtn{padding:5px 8px;font-size:10px;}
 }
-
-
 </style>
 </head>
 <body>
@@ -2816,7 +2814,9 @@ function safeGetEl(id) {
 
 // ===== 【補強】iPhone 手機列印 isMobile 偵測 =====
 (function() {
-
+  var isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (isMobile) {
+    document.addEventListener('DOMContentLoaded', function() {
       var btns = document.querySelectorAll('.hbtn');
       btns.forEach(function(btn) {
         var txt = btn.textContent || '';
